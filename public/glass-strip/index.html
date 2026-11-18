@@ -1,0 +1,3232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>GlassStrip, Vector 3D & Stock Studio Pro — ColorOS Edition</title>
+  <style>
+    :root {
+      --os-bg: #06080d;
+      --os-sheet: rgba(18, 22, 32, 0.90);
+      --os-card: rgba(29, 35, 50, 0.72);
+      --os-card-active: rgba(45, 104, 255, 0.28);
+      --os-border: rgba(255, 255, 255, 0.10);
+      --os-accent: #2d68ff;
+      --os-accent-cyan: #00d2ff;
+      --os-accent-glow: rgba(45, 104, 255, 0.38);
+      --os-text: #f8fafc;
+      --os-subtext: #94a3b8;
+      --radius-xl: 22px;
+      --radius-lg: 15px;
+      --radius-md: 11px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: "OPPOSans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(225, 29, 72, 0.15), transparent 55%),
+        radial-gradient(circle at 80% 25%, rgba(45, 104, 255, 0.14), transparent 55%),
+        var(--os-bg);
+      color: var(--os-text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 12px;
+    }
+
+    svg.icon {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    /* ColorOS Top Capsule Header (44px) */
+    .coloros-topbar {
+      height: 44px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+      flex-shrink: 0;
+      gap: 6px;
+    }
+
+    .os-brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .os-logo {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff778f, #e11d48, #2d68ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+      flex-shrink: 0;
+    }
+
+    .os-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .os-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .os-pill-btn {
+      height: 29px;
+      padding: 0 11px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--os-border);
+      background: var(--os-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--os-text);
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1), background 0.14s ease;
+    }
+
+    .os-pill-btn:active {
+      transform: scale(0.94);
+    }
+
+    .os-pill-btn.primary {
+      background: linear-gradient(135deg, var(--os-accent), #1d4ed8);
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 4px 14px var(--os-accent-glow);
+    }
+
+    .os-pill-btn.emerald {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    /* Main Workspace */
+    .workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Preview Stage */
+    .canvas-stage {
+      position: relative;
+      flex: 1;
+      min-height: 165px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px 8px;
+      overflow: hidden;
+    }
+
+    .canvas-card {
+      position: relative;
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+
+    #previewCanvas {
+      display: block;
+      max-width: 100%;
+      max-height: 38dvh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    /* Stage Floating Pills */
+    .os-badge-left {
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      background: rgba(10, 14, 22, 0.76);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 10px;
+      font-weight: 600;
+      color: #e2e8f0;
+      pointer-events: none;
+    }
+
+    .os-badge-right {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      background: rgba(10, 14, 22, 0.76);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .os-hint-pill {
+      position: absolute;
+      bottom: 7px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 14, 22, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 10px;
+      color: #cbd5e1;
+      white-space: nowrap;
+      pointer-events: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ColorOS Aquamorphic Bottom Sheet */
+    .coloros-sheet {
+      background: var(--os-sheet);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-top: 1px solid var(--os-border);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      padding: 8px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      height: 54dvh;
+      flex-shrink: 0;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.48);
+    }
+
+    /* ColorOS 4-Tab Segmented Capsule Switcher */
+    .os-segmented-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: rgba(8, 11, 18, 0.68);
+      border: 1px solid var(--os-border);
+      padding: 3px;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+
+    .os-tab-btn {
+      height: 27px;
+      border: none;
+      background: transparent;
+      color: var(--os-subtext);
+      border-radius: var(--radius-pill);
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .os-tab-btn.active {
+      background: var(--os-accent);
+      color: #fff;
+      box-shadow: 0 2px 10px var(--os-accent-glow);
+    }
+
+    /* Tab Panels */
+    .os-panel {
+      flex: 1;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 2px;
+    }
+
+    .os-panel.active {
+      display: flex;
+    }
+
+    /* ColorOS Aquamorphic Cards */
+    .os-card {
+      background: var(--os-card);
+      border: 1px solid var(--os-border);
+      border-radius: var(--radius-lg);
+      padding: 7px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .os-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .os-card-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .os-card-title svg.icon {
+      color: var(--os-accent-cyan);
+    }
+
+    /* 5 Surface Category Filter Pills */
+    .engine-pills {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+
+    .engine-pill {
+      height: 25px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--os-border);
+      background: rgba(10, 14, 22, 0.65);
+      color: var(--os-subtext);
+      font-size: 9px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 0 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.14s ease;
+    }
+
+    .engine-pill.active {
+      background: linear-gradient(135deg, var(--os-accent), #4f46e5);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #fff;
+      box-shadow: 0 2px 8px var(--os-accent-glow);
+    }
+
+    /* 38 Pure Visual Style Presets Grid (Scrollable Compact 5-Col Grid) */
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      max-height: 146px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .style-tile {
+      background: rgba(12, 16, 24, 0.68);
+      border: 1px solid var(--os-border);
+      border-radius: var(--radius-md);
+      padding: 4px 2px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: var(--os-subtext);
+      transition: all 0.14s ease;
+    }
+
+    .style-tile.active {
+      background: var(--os-card-active);
+      border-color: var(--os-accent);
+      color: #fff;
+    }
+
+    .style-tile.active svg.icon {
+      color: var(--os-accent-cyan);
+    }
+
+    .style-tile span {
+      font-size: 8.8px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* ColorOS Thick Capsule Sliders */
+    .os-slider-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 34px;
+      align-items: center;
+      gap: 6px;
+      height: 18px;
+    }
+
+    .os-slider-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--os-subtext);
+      white-space: nowrap;
+    }
+
+    .os-slider-val {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--os-text);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"].os-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      background: rgba(8, 11, 18, 0.78);
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--os-border);
+      outline: none;
+      overflow: hidden;
+    }
+
+    input[type="range"].os-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      box-shadow: -400px 0 0 394px var(--os-accent);
+    }
+
+    /* ColorOS Theme Bubbles Grid */
+    .palette-bubbles {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .theme-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(12, 16, 24, 0.65);
+      border: 1px solid var(--os-border);
+      border-radius: var(--radius-pill);
+      padding: 4px 6px 4px 4px;
+      cursor: pointer;
+      min-width: 0;
+      transition: all 0.14s ease;
+    }
+
+    .theme-pill.active {
+      background: var(--os-card-active);
+      border-color: var(--os-accent);
+    }
+
+    .theme-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .theme-name {
+      font-size: 9.2px;
+      font-weight: 600;
+      color: var(--os-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Color Dots Bar */
+    .color-dots-list {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .color-circle-wrap {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.28);
+      cursor: pointer;
+    }
+
+    .color-circle-wrap input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 34px;
+      height: 34px;
+      margin: -6px;
+      cursor: pointer;
+      background: none;
+    }
+
+    /* Mini Segmented Row */
+    .mini-pills {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+      gap: 5px;
+    }
+
+    .mini-pill {
+      height: 26px;
+      padding: 0 5px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--os-border);
+      background: rgba(12, 16, 24, 0.6);
+      color: var(--os-subtext);
+      font-size: 9.2px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.14s ease;
+    }
+
+    .mini-pill.active {
+      background: var(--os-accent);
+      border-color: var(--os-accent);
+      color: #fff;
+    }
+
+    /* Upload Photo Tile */
+    .os-upload-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(45, 104, 255, 0.1);
+      border: 1px dashed rgba(45, 104, 255, 0.45);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .os-upload-bar input {
+      display: none;
+    }
+
+    /* =========================================================================
+       PANEL 3: BATCH 50 / 100 UNIQUE GENERATOR & FULL-RES 4500x3000 ZIP EXPORT
+       ========================================================================= */
+    .batch-progress-bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      display: none;
+    }
+
+    .batch-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--os-accent), var(--os-accent-cyan), #10b981);
+      transition: width 0.1s ease;
+    }
+
+    .vault-badge {
+      font-size: 9.5px;
+      color: var(--os-accent-cyan);
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.25);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .batch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+      gap: 7px;
+      padding-bottom: 12px;
+    }
+
+    .batch-item-card {
+      background: rgba(12, 16, 24, 0.78);
+      border: 1px solid var(--os-border);
+      border-radius: 11px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.14s ease, transform 0.14s ease;
+    }
+
+    .batch-item-card.editing {
+      border-color: var(--os-accent-cyan);
+      box-shadow: 0 0 0 1px var(--os-accent-cyan);
+    }
+
+    .batch-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      background: #04060a;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .batch-thumb-wrap canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .batch-id-tag {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: rgba(6, 8, 13, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .batch-style-tag {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      background: rgba(6, 8, 13, 0.82);
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+      font-size: 8.5px;
+      color: #cbd5e1;
+    }
+
+    .batch-card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 5px;
+    }
+
+    .batch-card-btn {
+      height: 23px;
+      border-radius: 6px;
+      border: 1px solid var(--os-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--os-text);
+      font-size: 9.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      transition: background 0.12s ease;
+    }
+
+    .batch-card-btn:hover {
+      background: var(--os-accent);
+      border-color: var(--os-accent);
+    }
+
+    /* Desktop Responsive Layout */
+    @media (min-width: 820px) {
+      .workspace {
+        flex-direction: row;
+        padding: 0 16px 16px;
+        gap: 16px;
+      }
+      .canvas-stage {
+        flex: 1;
+        height: 100%;
+      }
+      #previewCanvas {
+        max-height: 78dvh;
+      }
+      .coloros-sheet {
+        width: 445px;
+        height: 100%;
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--os-border);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- OPPO ColorOS Top Bar -->
+  <header class="coloros-topbar">
+    <div class="os-brand">
+      <div class="os-logo">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/><circle cx="16" cy="16" r="2"/></svg>
+      </div>
+      <span class="os-title">GlassStrip, Vector 3D & Stock Studio Pro</span>
+    </div>
+
+    <div class="os-top-actions">
+      <button class="os-pill-btn" id="autoMagicBtn" title="Generate 100% Unique New Style & Color (Never Repeats)">
+        <svg class="icon" viewBox="0 0 24 24" style="color:var(--os-accent-cyan);"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/></svg>
+        <span>Auto Magic</span>
+      </button>
+      <button class="os-pill-btn primary" id="quickSaveBtn">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Save HD</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="workspace">
+    <!-- Live Interactive Canvas Stage -->
+    <section class="canvas-stage">
+      <div class="canvas-card">
+        <canvas id="previewCanvas" width="720" height="480"></canvas>
+        <div class="os-badge-left" id="sizeBadge">3:2 · 4500×3000</div>
+        <button class="os-badge-right" id="compareBtn">
+          <svg class="icon" viewBox="0 0 24 24" style="width:11px;height:11px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Original</span>
+        </button>
+        <div class="os-hint-pill">
+          <svg class="icon" viewBox="0 0 24 24" style="width:11px;height:11px;color:var(--os-accent-cyan);"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          <span id="hintLabel">Touch & drag on image to move light & shapes</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPPO ColorOS Aquamorphic Bottom Control Sheet -->
+    <aside class="coloros-sheet">
+      <!-- 4-Tab Capsule Switcher -->
+      <nav class="os-segmented-nav">
+        <button class="os-tab-btn active" data-tab="panel-style">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><circle cx="8" cy="16" r="2"/><circle cx="16" cy="16" r="2"/></svg>
+          <span>Style & Dots</span>
+        </button>
+        <button class="os-tab-btn" data-tab="panel-color">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18"/></svg>
+          <span>Colors</span>
+        </button>
+        <button class="os-tab-btn" data-tab="panel-batch" id="openBatchTabBtn">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Batch 50/100</span>
+        </button>
+        <button class="os-tab-btn" data-tab="panel-save">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Touch & Save</span>
+        </button>
+      </nav>
+
+      <!-- PANEL 1: 5 SURFACE FAMILIES + 38 STUDIO PRESETS -->
+      <div class="os-panel active" id="panel-style">
+        <div class="os-card">
+          <div class="engine-pills" id="surfaceModeRow">
+            <button class="engine-pill active" data-surface="vector3d">
+              <span>Vector 3D</span>
+            </button>
+            <button class="engine-pill" data-surface="stockViral">
+              <span>Stock Viral</span>
+            </button>
+            <button class="engine-pill" data-surface="cellular">
+              <span>Cellular 3D</span>
+            </button>
+            <button class="engine-pill" data-surface="vectricx">
+              <span>Vectricx</span>
+            </button>
+            <button class="engine-pill" data-surface="glass">
+              <span>Glass Rib</span>
+            </button>
+            <button class="engine-pill" data-surface="satin">
+              <span>3D Satin</span>
+            </button>
+            <button class="engine-pill" data-surface="dotSatin">
+              <span>Dot-Satin</span>
+            </button>
+            <button class="engine-pill" data-surface="combo">
+              <span>Rib + Dots</span>
+            </button>
+          </div>
+
+          <!-- 38 Pure One-Tap Studio Presets -->
+          <div class="style-grid" id="styleGrid">
+            <!-- 1. Andy Creator Hindi Vector 3D Playlist Collection (9 Styles) -->
+            <button class="style-tile active" data-preset="lowPoly3D">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 22 9 18 21 6 21 2 9 12 2"/><polyline points="2 9 12 14 22 9"/><line x1="12" y1="2" x2="12" y2="14"/><line x1="12" y1="14" x2="6" y2="21"/><line x1="12" y1="14" x2="18" y2="21"/></svg>
+              <span>3D Low Poly</span>
+            </button>
+            <button class="style-tile" data-preset="fluidLava">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 14c3-6 7 4 11-2s5-4 5 2-4 7-9 6-9-2-7-6Z"/><circle cx="7" cy="7" r="2"/><circle cx="17" cy="6" r="1.5"/></svg>
+              <span>3D Fluid Blob</span>
+            </button>
+            <button class="style-tile" data-preset="shapeBlend">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 10c4-6 8 6 12 0s4-6 6 0"/><path d="M3 16c4-6 8 6 12 0s4-6 6 0"/><circle cx="17" cy="7" r="2.5"/></svg>
+              <span>Shape Blend</span>
+            </button>
+            <button class="style-tile" data-preset="furyFeather">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 18c5-8 10-10 18-12"/><path d="m7 14-2-4"/><path d="m11 11-2-4"/><path d="m15 9-1-4"/><path d="m9 15 3 4"/><path d="m13 12 3 4"/></svg>
+              <span>Fury Feather</span>
+            </button>
+            <button class="style-tile" data-preset="luxuryFloral">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 1 0 8 4 4 0 0 1 0-8Z"/><path d="M12 14a4 4 0 0 1 0 8 4 4 0 0 1 0-8Z"/><path d="M2 12a4 4 0 0 1 8 0 4 4 0 0 1-8 0Z"/><path d="M14 12a4 4 0 0 1 8 0 4 4 0 0 1-8 0Z"/></svg>
+              <span>3D Floral</span>
+            </button>
+            <button class="style-tile" data-preset="stripes3DCube">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="3 7 12 12 21 7"/><polyline points="3 12 12 17 21 12"/><polyline points="3 17 12 22 21 17"/><line x1="12" y1="12" x2="12" y2="22"/></svg>
+              <span>3D Stripes</span>
+            </button>
+            <button class="style-tile" data-preset="radialSunburst">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M19.1 4.9l-2.8 2.8M7.7 16.3l-2.8 2.8"/></svg>
+              <span>Luxury Radial</span>
+            </button>
+            <button class="style-tile" data-preset="circleCutout">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="3"/><line x1="5" y1="19" x2="19" y2="5"/></svg>
+              <span>3D Circle Cut</span>
+            </button>
+            <button class="style-tile" data-preset="particleWave">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="4" cy="14" r="1"/><circle cx="8" cy="10" r="1.5"/><circle cx="12" cy="13" r="1.5"/><circle cx="16" cy="9" r="1.5"/><circle cx="20" cy="12" r="1"/><circle cx="6" cy="17" r="1"/><circle cx="14" cy="17" r="1"/></svg>
+              <span>Particle Wave</span>
+            </button>
+
+            <!-- 2. Adobe Stock Viral Video Tutorials (vh4ubUMRqg0, IAtFFgPEaHk, rkyq_hq9F5o, rIWT8J1VU7s, TRPjcePow6w) -->
+            <button class="style-tile" data-preset="neonVertical">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="3" x2="4" y2="21"/><line x1="8" y1="3" x2="8" y2="21"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="16" y1="3" x2="16" y2="21"/><line x1="20" y1="3" x2="20" y2="21"/></svg>
+              <span>Neon Stripes</span>
+            </button>
+            <button class="style-tile" data-preset="diffCross">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="3" y1="3" x2="21" y2="21"/><line x1="21" y1="3" x2="3" y2="21"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              <span>Diff Prism X</span>
+            </button>
+            <button class="style-tile" data-preset="grungeBrush">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 8h16M5 12h16M3 16h14"/><path d="m14 5 5 14"/></svg>
+              <span>Grunge Brush</span>
+            </button>
+            <button class="style-tile" data-preset="woodGrain">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 6c5 1 9-1 18 0"/><path d="M3 12c4-2 8 2 18 0"/><path d="M3 18c6 1 10-1 18 0"/><ellipse cx="14" cy="12" rx="3" ry="1.5"/></svg>
+              <span>Wood Grain</span>
+            </button>
+            <button class="style-tile" data-preset="luxuryMarble">
+              <svg class="icon" viewBox="0 0 24 24"><path d="m3 6 5 4-2 5 6 4"/><path d="m13 4-2 6 5 3 4 6"/><path d="m8 10 9 3"/></svg>
+              <span>Luxury Marble</span>
+            </button>
+
+            <!-- 3. 6647.jpg Cellular & Voronoi Collection (6 Styles) -->
+            <button class="style-tile" data-preset="cellGlow">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="10" r="3.5"/><circle cx="10" cy="16" r="3"/></svg>
+              <span>Cell Glow</span>
+            </button>
+            <button class="style-tile" data-preset="voronoi3D">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 19 7 16 15 8 15 5 7 12 2"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              <span>3D Voronoi</span>
+            </button>
+            <button class="style-tile" data-preset="neonVeins">
+              <svg class="icon" viewBox="0 0 24 24"><path d="m4 4 7 6 9-4"/><path d="m11 10 2 10"/><path d="m4 18 7-8"/></svg>
+              <span>Neon Veins</span>
+            </button>
+            <button class="style-tile" data-preset="mosaicTiles">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="3 3 11 4 9 12 3 10"/><polygon points="11 4 21 3 20 13 9 12"/><polygon points="3 10 9 12 11 21 3 21"/><polygon points="9 12 20 13 21 21 11 21"/></svg>
+              <span>Mosaic Tile</span>
+            </button>
+            <button class="style-tile" data-preset="cellWeb">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="8"/></svg>
+              <span>Bio Cells</span>
+            </button>
+            <button class="style-tile" data-preset="bokehSpore">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="7" cy="14" r="3"/><circle cx="15" cy="9" r="4"/><circle cx="16" cy="17" r="2.5"/></svg>
+              <span>Bokeh Spore</span>
+            </button>
+
+            <!-- 4. 6645.jpg & 6646.jpg Vectricx Collection (6 Styles — Dark Nebula Fixed!) -->
+            <button class="style-tile" data-preset="topoLiquid">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 7c3-4 6 4 9 0s6 4 9 0"/><path d="M3 12c3-4 6 4 9 0s6 4 9 0"/><path d="M3 17c3-4 6 4 9 0s6 4 9 0"/></svg>
+              <span>Topo Liquid</span>
+            </button>
+            <button class="style-tile" data-preset="magmaRock">
+              <svg class="icon" viewBox="0 0 24 24"><path d="m3 17 5-5 4 3 6-7 3 4"/><path d="M3 21h18"/></svg>
+              <span>3D Relief</span>
+            </button>
+            <button class="style-tile" data-preset="canyonRidge">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M2 7h6l3 3h11"/><path d="M2 13h9l3 3h8"/><path d="M2 19h5l3 2h12"/></svg>
+              <span>Canyon Wave</span>
+            </button>
+            <button class="style-tile" data-preset="nebulaCloud">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              <span>Dark Nebula</span>
+            </button>
+            <button class="style-tile" data-preset="brushedGrunge">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="8" y1="4" x2="8" y2="20"/><line x1="16" y1="4" x2="16" y2="20"/></svg>
+              <span>Grunge Silk</span>
+            </button>
+            <button class="style-tile" data-preset="streakBlur">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M6 3v18M10 6v12M14 3v18M18 7v10"/></svg>
+              <span>Streak Blur</span>
+            </button>
+
+            <!-- 5. Original Glass, Satin & Dot-Matrix Collection (12 Styles) -->
+            <button class="style-tile" data-preset="crimsonRib">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M5 3v18M9 3v18M13 3v18M17 3v18M20 3v18"/></svg>
+              <span>3D Ribbed</span>
+            </button>
+            <button class="style-tile" data-preset="wave">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M2 8c2 0 2-3 4-3s2 3 4 3 2-3 4-3 2 3 4 3"/><path d="M2 16c2 0 2-3 4-3s2 3 4 3 2-3 4-3 2 3 4 3"/></svg>
+              <span>Glass Wave</span>
+            </button>
+            <button class="style-tile" data-preset="satinFold">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="19" x2="19" y2="5"/><line x1="9" y1="21" x2="21" y2="9"/><line x1="3" y1="15" x2="15" y2="3"/></svg>
+              <span>Satin 39°</span>
+            </button>
+            <button class="style-tile" data-preset="satinDrape">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 16c4-8 8 8 12 0s4-8 6-4"/><path d="M3 9c4-8 8 8 12 0s4-8 6-4"/></svg>
+              <span>Silk Drape</span>
+            </button>
+            <button class="style-tile" data-preset="dotBeam">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="6" cy="6" r="1.5"/><circle cx="12" cy="6" r="1.5"/><circle cx="18" cy="6" r="1.5"/><circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/><line x1="4" y1="20" x2="20" y2="4"/></svg>
+              <span>Dot Beam</span>
+            </button>
+            <button class="style-tile" data-preset="pixelLed">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+              <span>LED Matrix</span>
+            </button>
+            <button class="style-tile" data-preset="prism">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="12 3 2 20 22 20 12 3"/></svg>
+              <span>Crystal</span>
+            </button>
+            <button class="style-tile" data-preset="zigzag">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="3 9 8 4 13 9 18 4 21 7"/><polyline points="3 18 8 13 13 18 18 13 21 16"/></svg>
+              <span>ZigZag</span>
+            </button>
+            <button class="style-tile" data-preset="arch">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 20c2-10 14-10 16 0"/><path d="M7 20c1.5-6 8.5-6 10 0"/></svg>
+              <span>3D Arch</span>
+            </button>
+            <button class="style-tile" data-preset="zenRipple">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>
+              <span>Zen Ripple</span>
+            </button>
+            <button class="style-tile" data-preset="helixTwist">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6a6 6 0 1 0 6 6"/></svg>
+              <span>Helix Twist</span>
+            </button>
+            <button class="style-tile" data-preset="grid">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg>
+              <span>Waffle 2D</span>
+            </button>
+            <button class="style-tile" data-preset="velvetPlisse">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 20 20 4M8 22 22 8M2 16 16 2"/></svg>
+              <span>Plisse Fold</span>
+            </button>
+            <button class="style-tile" data-preset="liquidAurora">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M2 12c3-6 6 6 9 0s6 6 11 0"/></svg>
+              <span>Aurora Flow</span>
+            </button>
+            <button class="style-tile" data-preset="frostedReeded">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 3v18M7 3v18M11 3v18M16 3v18M21 3v18"/></svg>
+              <span>Reeded Glass</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="os-card">
+          <div class="os-slider-row">
+            <span class="os-slider-label">Scale / Cells</span>
+            <input type="range" class="os-range" id="stripCountSlider" min="4" max="90" value="22" />
+            <span class="os-slider-val" id="stripCountVal">22</span>
+          </div>
+          <div class="os-slider-row">
+            <span class="os-slider-label">3D Depth</span>
+            <input type="range" class="os-range" id="glassDepthSlider" min="10" max="100" value="86" />
+            <span class="os-slider-val" id="glassDepthVal">86%</span>
+          </div>
+          <div class="os-slider-row">
+            <span class="os-slider-label">Rim / Bevel</span>
+            <input type="range" class="os-range" id="satinBlurSlider" min="0" max="100" value="78" />
+            <span class="os-slider-val" id="satinBlurVal">78%</span>
+          </div>
+          <div class="os-slider-row">
+            <span class="os-slider-label">Dot Grid Size</span>
+            <input type="range" class="os-range" id="dotSizeSlider" min="0" max="100" value="0" />
+            <span class="os-slider-val" id="dotSizeVal">0%</span>
+          </div>
+          <div class="os-slider-row">
+            <span class="os-slider-label">Dot Overlay</span>
+            <input type="range" class="os-range" id="dotOpacitySlider" min="0" max="100" value="0" />
+            <span class="os-slider-val" id="dotOpacityVal">0%</span>
+          </div>
+          <div class="os-slider-row">
+            <span class="os-slider-label">Angle</span>
+            <input type="range" class="os-range" id="angleSlider" min="-90" max="90" step="1" value="0" />
+            <span class="os-slider-val" id="angleVal">0°</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: EASY COLOR THEMES & PHOTO EXTRACTOR -->
+      <div class="os-panel" id="panel-color">
+        <div class="os-card">
+          <div class="os-card-header">
+            <span class="os-card-title">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18"/></svg>
+              <span>16 Studio Color Themes (1-Tap)</span>
+            </span>
+            <div class="color-dots-list" id="colorDotsContainer"></div>
+          </div>
+
+          <div class="palette-bubbles" id="paletteGrid"></div>
+
+          <div class="mini-pills" id="gradModeRow">
+            <button class="mini-pill active" data-gmode="mesh">Soft Mesh</button>
+            <button class="mini-pill" data-gmode="beam">39° Beam</button>
+            <button class="mini-pill" data-gmode="aurora">Aurora Silk</button>
+            <button class="mini-pill" data-gmode="horizon">Horizon</button>
+          </div>
+        </div>
+
+        <div class="os-card">
+          <div class="os-slider-row">
+            <span class="os-slider-label">Dark Mood</span>
+            <input type="range" class="os-range" id="darkMoodSlider" min="15" max="85" value="48" />
+            <span class="os-slider-val" id="darkMoodVal">48%</span>
+          </div>
+
+          <label class="os-upload-bar">
+            <input type="file" id="photoInput" accept="image/*" />
+            <span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;color:#fff;">
+              <svg class="icon" viewBox="0 0 24 24" style="color:var(--os-accent-cyan);"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Pick Colors from Photo</span>
+            </span>
+            <span style="font-size:10.5px;color:var(--os-accent-cyan);font-weight:600;">Upload</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- PANEL 3: BATCH 50 / 100 NON-REPEATING GENERATOR & FULL-RES 4500x3000 ZIP EXPORT -->
+      <div class="os-panel" id="panel-batch">
+        <div class="os-card">
+          <div class="os-card-header" style="flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <button class="os-pill-btn primary" id="gen50Btn">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Generate 50</span>
+              </button>
+              <button class="os-pill-btn primary" id="gen100Btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Generate 100</span>
+              </button>
+              <span class="vault-badge" id="vaultCountBadge">0 Unique Locked</span>
+            </div>
+
+            <button class="os-pill-btn emerald" id="exportAllZipBtn">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export All (.ZIP)</span>
+            </button>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--os-subtext);">
+            <span id="batchStatusText">Every click creates 100% brand-new styles (Zero repeats ever!)</span>
+          </div>
+
+          <div class="batch-progress-bar" id="batchProgressBar">
+            <div class="batch-progress-fill" id="batchProgressFill"></div>
+          </div>
+        </div>
+
+        <div class="batch-grid" id="batchGridContainer"></div>
+      </div>
+
+      <!-- PANEL 4: SIMPLE TOUCH TOOLS & ONE-TAP EXPORT -->
+      <div class="os-panel" id="panel-save">
+        <div class="os-card">
+          <div class="os-card-header">
+            <span class="os-card-title">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v4"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/></svg>
+              <span>Finger Touch Effect on Image</span>
+            </span>
+            <button class="os-pill-btn" id="resetTouchBtn" style="height:23px;padding:0 8px;font-size:10px;">Reset</button>
+          </div>
+          <div class="mini-pills" id="touchModeRow">
+            <button class="mini-pill active" data-touch="move">Move Colors</button>
+            <button class="mini-pill" data-touch="brush">Paint Glow</button>
+            <button class="mini-pill" data-touch="liquify">Swirl Liquify</button>
+          </div>
+        </div>
+
+        <div class="os-card">
+          <div class="os-card-header">
+            <span class="os-card-title">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Choose Size & Download (100% Master Quality)</span>
+            </span>
+          </div>
+
+          <div class="mini-pills" id="sizeRow" style="grid-template-columns: repeat(2, 1fr);">
+            <button class="mini-pill active" data-w="4500" data-h="3000" data-ratio="3:2">Adobe Stock (4500×3000)</button>
+            <button class="mini-pill" data-w="6000" data-h="3370" data-ratio="16:9">Stock Max (6000×3370)</button>
+            <button class="mini-pill" data-w="2160" data-h="3840" data-ratio="9:16">Phone Card (2160×3840)</button>
+            <button class="mini-pill" data-w="3840" data-h="2160" data-ratio="16:9">PC 4K (3840×2160)</button>
+            <button class="mini-pill" data-w="3000" data-h="3000" data-ratio="1:1">Square Post (3000×3000)</button>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:2px;">
+            <button class="os-pill-btn primary" id="dlPngBtn" style="flex:1;justify-content:center;height:34px;">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download PNG</span>
+            </button>
+            <button class="os-pill-btn" id="dlJpgBtn" style="flex:1;justify-content:center;height:34px;">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download JPG</span>
+            </button>
+          </div>
+          <div id="saveStatus" style="font-size:10.5px;color:#10b981;text-align:center;min-height:14px;"></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    // =========================================================================
+    // GLASSSTRIP, VECTOR 3D & STOCK VIRAL STUDIO PRO — 38 PURE STUDIO ENGINES
+    // Includes:
+    // 1. Andy Creator Hindi Vector 3D Playlist (9 Styles):
+    //    - 3D Low Poly (-ZaqTFwcU-4), 3D Fluid Blob (KQViQfWdVaE),
+    //    - Shape Blend (Zs1HJHUPKWs), Fury Feather (EoEQ9_MoOQg),
+    //    - 3D Floral (lkM_zfK6G0c), 3D Stripes (xa757bS80jE),
+    //    - Luxury Radial (CHO3i8kTMuA), 3D Circle Cut (CxxWIv17sUM),
+    //    - Particle Wave (DwGiR_Iw2B8)
+    // 2. Adobe Stock Viral Video Tutorials (5 Styles):
+    //    - Neon Stripes (IAtFFgPEaHk), Diff Prism X (vh4ubUMRqg0),
+    //    - Grunge Brush (rkyq_hq9F5o), Wood Grain (rIWT8J1VU7s),
+    //    - Luxury Marble (TRPjcePow6w)
+    // 3. 6647.jpg Cellular & Voronoi + 6645/6646.jpg Vectricx (Fixed Dark Nebula!)
+    // 4. Non-Repeating Shuffled Deck Engine for Bulk 50/100 Generation
+    // =========================================================================
+
+    const previewCanvas = document.getElementById('previewCanvas');
+    const baseCanvas = document.createElement('canvas');
+    const baseCtx = baseCanvas.getContext('2d', { willReadFrequently: true });
+
+    const state = {
+      exportW: 4500,
+      exportH: 3000,
+      ratioLabel: '3:2',
+      surfaceMode: 'vector3d',
+      presetKey: 'lowPoly3D',
+      dotShape: 'circle',
+      dotSize: 0.0,
+      dotOpacity: 0.0,
+      gradMode: 'mesh',
+      darkMood: 0.48,
+      stripGeom: 'lowPoly3D',
+      profile: 'prism',
+      stripCount: 22,
+      glassDepth: 0.86,
+      satinBlur: 0.78,
+      angle: 0,
+      seedOffset: 37,
+      morphVariant: 0,
+      touchMode: 'move',
+      showOriginal: false,
+      activePalette: 0,
+      editingBatchIndex: -1,
+      orbs: [
+        { x: 0.24, y: 0.28, color: '#ff2a85', radius: 0.62 },
+        { x: 0.56, y: 0.64, color: '#6366f1', radius: 0.66 },
+        { x: 0.78, y: 0.34, color: '#00d2ff', radius: 0.58 },
+        { x: 0.32, y: 0.76, color: '#f97316', radius: 0.54 }
+      ],
+      paintStrokes: [],
+      liquifyPushes: []
+    };
+
+    // 38 Pure Studio Presets across 5 Surface Categories
+    const STYLE_PRESETS = {
+      // 1. Andy Creator Hindi Vector 3D Playlist Styles (9 Presets)
+      lowPoly3D:      { label: '3D Low Poly',   surface: 'vector3d',   gmode: 'mesh',    geom: 'lowPoly3D',      profile: 'prism',    count: 22, depth: 88, blur: 80, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      fluidLava:      { label: '3D Fluid Blob', surface: 'vector3d',   gmode: 'mesh',    geom: 'fluidLava',      profile: 'sine',     count: 14, depth: 88, blur: 84, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 15 },
+      shapeBlend:     { label: 'Shape Blend',   surface: 'vector3d',   gmode: 'aurora',  geom: 'shapeBlend',     profile: 'sine',     count: 18, depth: 90, blur: 85, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: -12 },
+      furyFeather:    { label: 'Fury Feather',  surface: 'vector3d',   gmode: 'mesh',    geom: 'furyFeather',    profile: 'sawtooth', count: 42, depth: 86, blur: 82, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 24 },
+      luxuryFloral:   { label: '3D Floral',     surface: 'vector3d',   gmode: 'mesh',    geom: 'luxuryFloral',   profile: 'cylinder', count: 16, depth: 88, blur: 80, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      stripes3DCube:  { label: '3D Stripes',    surface: 'vector3d',   gmode: 'mesh',    geom: 'stripes3DCube',  profile: 'prism',    count: 34, depth: 90, blur: 78, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      radialSunburst: { label: 'Luxury Radial', surface: 'vector3d',   gmode: 'mesh',    geom: 'radialSunburst', profile: 'cylinder', count: 48, depth: 86, blur: 82, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      circleCutout:   { label: '3D Circle Cut', surface: 'vector3d',   gmode: 'mesh',    geom: 'circleCutout',   profile: 'cylinder', count: 14, depth: 88, blur: 80, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: -35 },
+      particleWave:   { label: 'Particle Wave', surface: 'vector3d',   gmode: 'aurora',  geom: 'particleWave',   profile: 'sine',     count: 36, depth: 88, blur: 84, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 12 },
+
+      // 2. Adobe Stock Viral Video Tutorials (5 Presets)
+      neonVertical:   { label: 'Neon Stripes',  surface: 'stockViral', gmode: 'mesh',    geom: 'neonVertical',   profile: 'cylinder', count: 32, depth: 90, blur: 82, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      diffCross:      { label: 'Diff Prism X',  surface: 'stockViral', gmode: 'mesh',    geom: 'diffCross',      profile: 'prism',    count: 16, depth: 88, blur: 84, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 45 },
+      grungeBrush:    { label: 'Grunge Brush',  surface: 'stockViral', gmode: 'mesh',    geom: 'grungeBrush',    profile: 'sawtooth', count: 28, depth: 86, blur: 76, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: -18 },
+      woodGrain:      { label: 'Wood Grain',    surface: 'stockViral', gmode: 'horizon', geom: 'woodGrain',      profile: 'sine',     count: 26, depth: 84, blur: 74, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      luxuryMarble:   { label: 'Luxury Marble', surface: 'stockViral', gmode: 'mesh',    geom: 'luxuryMarble',   profile: 'sine',     count: 20, depth: 88, blur: 82, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 22 },
+
+      // 3. 6647.jpg Cellular & Voronoi Collection (6 Presets)
+      cellGlow:       { label: 'Cell Glow',     surface: 'cellular',   gmode: 'mesh',    geom: 'cellGlow',       profile: 'sine',     count: 16, depth: 86, blur: 78, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      voronoi3D:      { label: '3D Voronoi',    surface: 'cellular',   gmode: 'mesh',    geom: 'voronoi3D',      profile: 'prism',    count: 18, depth: 88, blur: 82, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      neonVeins:      { label: 'Neon Veins',    surface: 'cellular',   gmode: 'mesh',    geom: 'neonVeins',      profile: 'prism',    count: 12, depth: 90, blur: 85, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      mosaicTiles:    { label: 'Mosaic Tile',   surface: 'cellular',   gmode: 'mesh',    geom: 'mosaicTiles',    profile: 'cylinder', count: 22, depth: 86, blur: 76, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      cellWeb:        { label: 'Bio Cells',     surface: 'cellular',   gmode: 'aurora',  geom: 'cellWeb',        profile: 'sine',     count: 16, depth: 84, blur: 80, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      bokehSpore:     { label: 'Bokeh Spore',   surface: 'cellular',   gmode: 'mesh',    geom: 'bokehSpore',     profile: 'sine',     count: 20, depth: 88, blur: 84, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+
+      // 4. 6645.jpg & 6646.jpg Vectricx Collection (6 Presets)
+      topoLiquid:     { label: 'Topo Liquid',   surface: 'vectricx',   gmode: 'mesh',    geom: 'topoLiquid',     profile: 'sine',     count: 24, depth: 86, blur: 80, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 18 },
+      magmaRock:      { label: '3D Relief',     surface: 'vectricx',   gmode: 'mesh',    geom: 'magmaRock',      profile: 'prism',    count: 28, depth: 90, blur: 84, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      canyonRidge:    { label: 'Canyon Wave',   surface: 'vectricx',   gmode: 'horizon', geom: 'canyonRidge',    profile: 'cylinder', count: 16, depth: 86, blur: 78, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      nebulaCloud:    { label: 'Dark Nebula',   surface: 'vectricx',   gmode: 'mesh',    geom: 'nebulaCloud',    profile: 'sine',     count: 16, depth: 84, blur: 78, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      brushedGrunge:  { label: 'Grunge Silk',   surface: 'vectricx',   gmode: 'mesh',    geom: 'brushedGrunge',  profile: 'sawtooth', count: 32, depth: 84, blur: 75, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+      streakBlur:     { label: 'Streak Blur',   surface: 'vectricx',   gmode: 'mesh',    geom: 'streakBlur',     profile: 'cylinder', count: 28, depth: 85, blur: 78, dotSize: 0, dotOp: 0, dotShape: 'circle', angle: 0 },
+
+      // 5. Glass, Satin & Dot-Matrix Collection (12 Presets)
+      crimsonRib:     { label: '3D Ribbed',     surface: 'glass',      gmode: 'mesh',    geom: 'linear',         profile: 'cylinder', count: 38, depth: 82, blur: 74, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 },
+      wave:           { label: 'Glass Wave',    surface: 'glass',      gmode: 'mesh',    geom: 'wave',           profile: 'cylinder', count: 34, depth: 84, blur: 76, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 },
+      satinFold:      { label: 'Satin 39°',     surface: 'satin',      gmode: 'beam',    geom: 'arch',           profile: 'sine',     count: 8,  depth: 85, blur: 86, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 39 },
+      satinDrape:     { label: 'Silk Drape',    surface: 'satin',      gmode: 'aurora',  geom: 'wave',           profile: 'sine',     count: 10, depth: 82, blur: 84, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 32 },
+      dotBeam:        { label: 'Dot Beam',      surface: 'dotSatin',   gmode: 'beam',    geom: 'none',           profile: 'sine',     count: 6,  depth: 86, blur: 88, dotSize: 22, dotOp: 62, dotShape: 'circle', angle: 39 },
+      pixelLed:       { label: 'LED Matrix',    surface: 'dotSatin',   gmode: 'beam',    geom: 'none',           profile: 'sine',     count: 6,  depth: 86, blur: 88, dotSize: 26, dotOp: 66, dotShape: 'square', angle: 39 },
+      prism:          { label: 'Crystal',       surface: 'glass',      gmode: 'mesh',    geom: 'linear',         profile: 'prism',    count: 24, depth: 88, blur: 80, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: -18 },
+      zigzag:         { label: 'ZigZag',        surface: 'glass',      gmode: 'mesh',    geom: 'zigzag',         profile: 'sawtooth', count: 36, depth: 76, blur: 68, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 },
+      arch:           { label: '3D Arch',       surface: 'glass',      gmode: 'mesh',    geom: 'arch',           profile: 'cylinder', count: 32, depth: 82, blur: 75, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 },
+      zenRipple:      { label: 'Zen Ripple',    surface: 'glass',      gmode: 'mesh',    geom: 'ripple',         profile: 'cylinder', count: 28, depth: 84, blur: 78, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 },
+      grid:           { label: 'Waffle 2D',     surface: 'glass',      gmode: 'mesh',    geom: 'grid',           profile: 'cylinder', count: 36, depth: 78, blur: 72, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 },
+      velvetPlisse:   { label: 'Plisse Fold',   surface: 'satin',      gmode: 'beam',    geom: 'zigzag',         profile: 'prism',    count: 20, depth: 84, blur: 78, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 28 },
+      liquidAurora:   { label: 'Aurora Flow',   surface: 'satin',      gmode: 'aurora',  geom: 'wave',           profile: 'sine',     count: 7,  depth: 78, blur: 90, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 20 },
+      helixTwist:     { label: 'Helix Twist',   surface: 'glass',      gmode: 'aurora',  geom: 'twist',          profile: 'cylinder', count: 30, depth: 84, blur: 76, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 15 },
+      frostedReeded:  { label: 'Reeded Glass',  surface: 'glass',      gmode: 'horizon', geom: 'reeded',         profile: 'cylinder', count: 44, depth: 80, blur: 72, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 0 }
+    };
+
+    // 16 Curated Studio Themes
+    const THEMES = [
+      { name: 'Cyber Magma',   colors: ['#ff2a85', '#6366f1', '#00d2ff', '#f97316'] },
+      { name: 'Crimson 6176',  colors: ['#ff778f', '#9e1437', '#610b22', '#2b030d'] },
+      { name: 'Amethyst Cell', colors: ['#d8b4fe', '#9333ea', '#581c87', '#1e0536'] },
+      { name: 'Luxury Gold',   colors: ['#fde047', '#f59e0b', '#92400e', '#1c0d02'] },
+      { name: 'Fluid Cyan',    colors: ['#38bdf8', '#ec4899', '#6366f1', '#090d16'] },
+      { name: 'Fury Sunset',   colors: ['#fef08a', '#f97316', '#e11d48', '#31081f'] },
+      { name: 'Emerald Bio',   colors: ['#bef264', '#10b981', '#065f46', '#042f2e'] },
+      { name: 'Walnut Wood',   colors: ['#eab308', '#b45309', '#78350f', '#271105'] },
+      { name: 'Carrara Gold',  colors: ['#f8fafc', '#c084fc', '#6366f1', '#1e1b4b'] },
+      { name: 'Tokyo Neon',    colors: ['#ff007f', '#7928ca', '#00d4ff', '#0f0524'] },
+      { name: 'Rose Facet',    colors: ['#fda4af', '#e11d48', '#881337', '#2d0612'] },
+      { name: 'Cobalt Satin',  colors: ['#60a5fa', '#2563eb', '#1e3a8a', '#081229'] },
+      { name: 'Teal Biolum',   colors: ['#99f6e4', '#14b8a6', '#115e59', '#032221'] },
+      { name: 'Rust Relief',   colors: ['#fdba74', '#ea580c', '#9a3412', '#270902'] },
+      { name: 'Arctic Prism',  colors: ['#7dd3fc', '#38bdf8', '#0284c7', '#082f49'] },
+      { name: 'Acid Matrix',   colors: ['#a3e635', '#10b981', '#06b6d4', '#052e16'] }
+    ];
+
+    // =========================================================================
+    // NATIVE 4500x3000 FAST PROCEDURAL LUTs (VORONOI + MICRO-DETAIL + FBM)
+    // =========================================================================
+    function hash2(x, y, seed) {
+      const h = Math.sin(x * 127.1 + y * 311.7 + seed * 74.7) * 43758.5453123;
+      return h - Math.floor(h);
+    }
+
+    function valueNoise(x, y, seed) {
+      const ix = Math.floor(x), iy = Math.floor(y);
+      const fx = x - ix, fy = y - iy;
+      const ux = fx * fx * (3 - 2 * fx);
+      const uy = fy * fy * (3 - 2 * fy);
+      const a = hash2(ix, iy, seed);
+      const b = hash2(ix + 1, iy, seed);
+      const c = hash2(ix, iy + 1, seed);
+      const d = hash2(ix + 1, iy + 1, seed);
+      return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+    }
+
+    function fbm2D(x, y, seed) {
+      let val = 0, amp = 0.5, freq = 1.0;
+      for (let i = 0; i < 5; i++) {
+        val += amp * valueNoise(x * freq, y * freq, seed + i * 19);
+        freq *= 2.03;
+        amp *= 0.5;
+      }
+      return val;
+    }
+
+    // 64x64 Periodic Voronoi Seed LUT for Native-Pixel Cellular & Low-Poly Shading
+    const VOR_GRID = 64;
+    const voronoiLutX = new Float32Array(VOR_GRID * VOR_GRID);
+    const voronoiLutY = new Float32Array(VOR_GRID * VOR_GRID);
+    const voronoiLutId = new Float32Array(VOR_GRID * VOR_GRID);
+
+    function populateVoronoiSeedLUT(seed) {
+      for (let y = 0; y < VOR_GRID; y++) {
+        for (let x = 0; x < VOR_GRID; x++) {
+          const idx = (y << 6) | x;
+          voronoiLutX[idx] = 0.14 + 0.72 * hash2(x, y, seed);
+          voronoiLutY[idx] = 0.14 + 0.72 * hash2(x, y, seed + 59);
+          voronoiLutId[idx] = hash2(x, y, seed + 127);
+        }
+      }
+    }
+
+    function fastVoronoiAt(x, y) {
+      const ix = Math.floor(x), iy = Math.floor(y);
+      const fx = x - ix, fy = y - iy;
+      let f1 = 8.0, f2 = 8.0, bestId = 0, bestDx = 0, bestDy = 0;
+
+      for (let dy = -1; dy <= 1; dy++) {
+        const cy = (iy + dy) & 63;
+        const rowOff = cy << 6;
+        for (let dx = -1; dx <= 1; dx++) {
+          const cx = (ix + dx) & 63;
+          const lutIdx = rowOff | cx;
+          const rx = dx + voronoiLutX[lutIdx] - fx;
+          const ry = dy + voronoiLutY[lutIdx] - fy;
+          const d2 = rx * rx + ry * ry;
+          if (d2 < f1) {
+            f2 = f1;
+            f1 = d2;
+            bestId = voronoiLutId[lutIdx];
+            bestDx = rx;
+            bestDy = ry;
+          } else if (d2 < f2) {
+            f2 = d2;
+          }
+        }
+      }
+      const d1 = Math.sqrt(f1);
+      const d2 = Math.sqrt(f2);
+      return { f1: d1, f2: d2, edge: d2 - d1, id: bestId, dx: bestDx, dy: bestDy };
+    }
+
+    // Exact Barycentric Triangular Low-Poly 3D Facet Evaluator (for -ZaqTFwcU-4)
+    function evalLowPoly3D(x, y) {
+      const ix = Math.floor(x), iy = Math.floor(y);
+      const fx = x - ix, fy = y - iy;
+
+      // 4 jittered corners of current cell (ix,iy), (ix+1,iy), (ix,iy+1), (ix+1,iy+1)
+      const i00 = ((iy & 63) << 6) | (ix & 63);
+      const i10 = ((iy & 63) << 6) | ((ix + 1) & 63);
+      const i01 = (((iy + 1) & 63) << 6) | (ix & 63);
+      const i11 = (((iy + 1) & 63) << 6) | ((ix + 1) & 63);
+
+      // Split quad into 2 jittered triangles along diagonal
+      const diagFlip = voronoiLutId[i00] > 0.5;
+      let triId, hA, hB, hC, u, v;
+      if (!diagFlip) {
+        if (fx + fy < 1.0) {
+          u = fx; v = fy;
+          hA = voronoiLutId[i00]; hB = voronoiLutId[i10]; hC = voronoiLutId[i01];
+          triId = hA * 0.7 + hB * 0.3;
+        } else {
+          u = 1.0 - fx; v = 1.0 - fy;
+          hA = voronoiLutId[i11]; hB = voronoiLutId[i01]; hC = voronoiLutId[i10];
+          triId = hA * 0.6 + hC * 0.4;
+        }
+      } else {
+        if (fx > fy) {
+          u = fx - fy; v = fy;
+          hA = voronoiLutId[i00]; hB = voronoiLutId[i10]; hC = voronoiLutId[i11];
+          triId = hB * 0.65 + hA * 0.35;
+        } else {
+          u = fy - fx; v = fx;
+          hA = voronoiLutId[i00]; hB = voronoiLutId[i01]; hC = voronoiLutId[i11];
+          triId = hB * 0.45 + hC * 0.55;
+        }
+      }
+      const w = Math.max(0, 1.0 - u - v);
+      const edgeDist = Math.min(u, v, w);
+      const slopeX = (hB - hA);
+      const slopeY = (hC - hA);
+      const linGrad = u * 0.85 + v * 0.45;
+      return { triId, slopeX, slopeY, linGrad, edgeDist };
+    }
+
+    // 512x512 Tileable High-Frequency Micro-Detail & Normal Slope LUT
+    const MICRO_SIZE = 512;
+    const microDetailLUT = new Float32Array(MICRO_SIZE * MICRO_SIZE);
+    const microSlopeXLUT = new Float32Array(MICRO_SIZE * MICRO_SIZE);
+    const microSlopeYLUT = new Float32Array(MICRO_SIZE * MICRO_SIZE);
+
+    function initMicroDetailLUT() {
+      for (let y = 0; y < MICRO_SIZE; y++) {
+        const ny = y / MICRO_SIZE;
+        for (let x = 0; x < MICRO_SIZE; x++) {
+          const nx = x / MICRO_SIZE;
+          const a1 = nx * Math.PI * 2, b1 = ny * Math.PI * 2;
+          const n1 = valueNoise(Math.cos(a1) * 9 + 15, Math.sin(b1) * 9 + 15, 31);
+          const n2 = valueNoise(Math.cos(a1 * 2) * 18 + 30, Math.sin(b1 * 2) * 18 + 30, 73);
+          const n3 = hash2(x, y, 191);
+          microDetailLUT[(y << 9) | x] = n1 * 0.52 + n2 * 0.33 + n3 * 0.15;
+        }
+      }
+      for (let y = 0; y < MICRO_SIZE; y++) {
+        const yn = (y + 1) & 511;
+        for (let x = 0; x < MICRO_SIZE; x++) {
+          const xn = (x + 1) & 511;
+          const c = microDetailLUT[(y << 9) | x];
+          microSlopeXLUT[(y << 9) | x] = microDetailLUT[(y << 9) | xn] - c;
+          microSlopeYLUT[(y << 9) | x] = microDetailLUT[(yn << 9) | x] - c;
+        }
+      }
+    }
+    initMicroDetailLUT();
+
+    // =========================================================================
+    // STRICT NON-REPEATING SHUFFLED DECK ENGINE FOR BULK 50/100 GENERATION
+    // Ensures that every time the user clicks Generate 50 / Generate 100 / Auto Magic,
+    // NO style+variant+color look is EVER repeated a 2nd time!
+    // =========================================================================
+    const VAULT_KEY = 'glassstrip_unique_dna_vault_v6';
+    const DECK_KEY  = 'glassstrip_shuffled_deck_v6';
+    const RUN_KEY   = 'glassstrip_batch_run_counter_v6';
+
+    const usedDnaVault = new Set();
+    let styleDeck = [];
+    let batchRunCounter = 0;
+    let lastGeneratedPreset = '';
+    let lastGeneratedHue = -999;
+
+    function loadVault() {
+      try {
+        const raw = localStorage.getItem(VAULT_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) parsed.forEach(k => usedDnaVault.add(k));
+        }
+        const rawDeck = localStorage.getItem(DECK_KEY);
+        if (rawDeck) {
+          const parsedDeck = JSON.parse(rawDeck);
+          if (Array.isArray(parsedDeck)) styleDeck = parsedDeck;
+        }
+        const rawRun = localStorage.getItem(RUN_KEY);
+        if (rawRun) batchRunCounter = parseInt(rawRun, 10) || 0;
+      } catch (e) {}
+      updateVaultUI();
+    }
+
+    function saveVault() {
+      try {
+        const arr = Array.from(usedDnaVault).slice(-8000);
+        localStorage.setItem(VAULT_KEY, JSON.stringify(arr));
+        localStorage.setItem(DECK_KEY, JSON.stringify(styleDeck.slice(0, 3000)));
+        localStorage.setItem(RUN_KEY, String(batchRunCounter));
+      } catch (e) {}
+      updateVaultUI();
+    }
+
+    function updateVaultUI() {
+      const el = document.getElementById('vaultCountBadge');
+      if (el) el.textContent = `${usedDnaVault.size} Unique Locked`;
+    }
+
+    function refillAndShuffleDeck() {
+      const presetKeys = Object.keys(STYLE_PRESETS);
+      const newDeck = [];
+      batchRunCounter++;
+      // Create 8 morphological variants x 38 presets = 304 distinct structural combinations per cycle
+      for (let morph = 0; morph < 8; morph++) {
+        for (let i = 0; i < presetKeys.length; i++) {
+          const pKey = presetKeys[i];
+          const comboId = `${pKey}|m${morph}|r${batchRunCounter}`;
+          if (!usedDnaVault.has(comboId)) {
+            newDeck.push({ pKey, morph, cycle: batchRunCounter });
+          }
+        }
+      }
+      // Seeded + Crypto Random Fisher-Yates Shuffle, ensuring adjacent items never share the same presetKey
+      for (let i = newDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = newDeck[i];
+        newDeck[i] = newDeck[j];
+        newDeck[j] = tmp;
+      }
+      styleDeck.push(...newDeck);
+    }
+
+    function hslToHex(h, s, l) {
+      h = ((h % 360) + 360) % 360;
+      s = Math.max(0, Math.min(100, s)) / 100;
+      l = Math.max(0, Math.min(100, l)) / 100;
+      const c = (1 - Math.abs(2 * l - 1)) * s;
+      const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+      const m = l - c / 2;
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; }
+      else if (h < 120) { r = x; g = c; }
+      else if (h < 180) { g = c; b = x; }
+      else if (h < 240) { g = x; b = c; }
+      else if (h < 300) { r = x; b = c; }
+      else { r = c; b = x; }
+      const toHex = n => Math.round((n + m) * 255).toString(16).padStart(2, '0');
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+
+    // Pulls the next unused structural + color combination from the non-repeating deck!
+    function generateUniqueSpec(offsetIdx = 0) {
+      if (styleDeck.length < 10) {
+        refillAndShuffleDeck();
+      }
+
+      // Ensure we never pick the same base presetKey twice in a row
+      let pickIdx = 0;
+      for (let i = 0; i < styleDeck.length; i++) {
+        if (styleDeck[i].pKey !== lastGeneratedPreset) {
+          pickIdx = i;
+          break;
+        }
+      }
+      const card = styleDeck.splice(pickIdx, 1)[0] || { pKey: 'lowPoly3D', morph: 0, cycle: 1 };
+      const pKey = card.pKey;
+      const morphVariant = card.morph;
+      lastGeneratedPreset = pKey;
+
+      const baseP = STYLE_PRESETS[pKey];
+      const uniqueSeq = usedDnaVault.size + offsetIdx + 1;
+
+      // Golden-angle hue stepping + minimum 45-degree hue jump from previous card
+      let baseHue = Math.round((uniqueSeq * 137.50776 + morphVariant * 47 + Math.random() * 29) % 360);
+      if (Math.abs(baseHue - lastGeneratedHue) < 42) {
+        baseHue = (baseHue + 115) % 360;
+      }
+      lastGeneratedHue = baseHue;
+
+      const harmony = (uniqueSeq + morphVariant) % 5;
+      let colors;
+      if (harmony === 0) {
+        // High-Contrast Analogous Neon
+        colors = [
+          hslToHex(baseHue, 95, 65),
+          hslToHex(baseHue + 38, 90, 50),
+          hslToHex(baseHue - 36, 86, 40),
+          hslToHex(baseHue + 70, 84, 15)
+        ];
+      } else if (harmony === 1) {
+        // Split-Complementary Cyber
+        colors = [
+          hslToHex(baseHue, 96, 64),
+          hslToHex(baseHue + 150, 88, 48),
+          hslToHex(baseHue + 210, 86, 40),
+          hslToHex(baseHue + 25, 88, 14)
+        ];
+      } else if (harmony === 2) {
+        // Triadic Studio Vivid
+        colors = [
+          hslToHex(baseHue, 94, 64),
+          hslToHex(baseHue + 120, 86, 48),
+          hslToHex(baseHue + 240, 86, 42),
+          hslToHex(baseHue + 60, 82, 14)
+        ];
+      } else if (harmony === 3) {
+        // Luxury Dual-Tone Gold/Gemstone
+        colors = [
+          hslToHex(baseHue, 95, 70),
+          hslToHex(baseHue + 22, 90, 48),
+          hslToHex(baseHue + 180, 82, 34),
+          hslToHex(baseHue + 18, 86, 11)
+        ];
+      } else {
+        // Deep Atmospheric Monochromatic Rich
+        colors = [
+          hslToHex(baseHue, 96, 72),
+          hslToHex(baseHue + 14, 90, 48),
+          hslToHex(baseHue - 14, 86, 28),
+          hslToHex(baseHue + 28, 84, 10)
+        ];
+      }
+
+      const scaleFactor = 0.68 + ((morphVariant * 0.11 + Math.random() * 0.25) % 0.72);
+      const count = Math.max(5, Math.min(86, Math.round(baseP.count * scaleFactor)));
+      const depth = Math.round((0.72 + (morphVariant % 4) * 0.06) * 100) / 100;
+      const blur = Math.round((0.64 + ((morphVariant + 2) % 4) * 0.07) * 100) / 100;
+      const darkMood = Math.round((0.42 + (morphVariant % 3) * 0.08) * 100) / 100;
+      const seedOffset = Math.floor(11 + (uniqueSeq * 73 + morphVariant * 131 + Math.random() * 500) % 9973);
+
+      const angleChoices = [-60, -45, -35, -22, -12, 0, 14, 25, 38, 45, 65];
+      const angle = (baseP.surface === 'dotSatin' || baseP.surface === 'satin')
+        ? [-42, -39, -28, 28, 35, 39, 45][(uniqueSeq + morphVariant) % 7]
+        : angleChoices[(uniqueSeq + morphVariant * 3) % angleChoices.length];
+
+      const dnaHash = `${pKey}|m${morphVariant}|r${card.cycle}|h${Math.floor(baseHue / 4)}|s${seedOffset}`;
+      usedDnaVault.add(dnaHash);
+      usedDnaVault.add(`${pKey}|m${morphVariant}|r${card.cycle}`);
+
+      const orbs = colors.map((c, i) => {
+        const ang = (morphVariant * 0.8 + i * 1.57 + Math.random() * 0.45);
+        const dist = 0.20 + ((i + morphVariant) % 3) * 0.09;
+        return {
+          x: Math.max(0.14, Math.min(0.86, 0.5 + Math.cos(ang) * dist)),
+          y: Math.max(0.15, Math.min(0.85, 0.5 + Math.sin(ang) * dist)),
+          color: c,
+          radius: 0.56 + (i % 2) * 0.08
+        };
+      });
+
+      return {
+        dnaHash,
+        presetKey: pKey,
+        surfaceMode: baseP.surface,
+        gradMode: baseP.gmode,
+        stripGeom: baseP.geom,
+        profile: baseP.profile,
+        stripCount: count,
+        glassDepth: depth,
+        satinBlur: blur,
+        dotSize: baseP.dotSize / 100,
+        dotOpacity: baseP.dotOp / 100,
+        dotShape: baseP.dotShape,
+        angle,
+        darkMood,
+        seedOffset,
+        morphVariant,
+        orbs,
+        paintStrokes: [],
+        liquifyPushes: []
+      };
+    }
+
+    function hexToRgb(hex) {
+      const clean = (hex || '#ff2a85').replace('#', '');
+      const num = parseInt(clean, 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function rgbToHex(r, g, b) {
+      const toHex = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+      return '#' + toHex(r) + toHex(g) + toHex(b);
+    }
+
+    // Soft-Knee Studio Tone Mapper (Prevents ANY style from blowing out to flat white!)
+    function studioToneMap(val255) {
+      const x = Math.max(0, val255) / 255;
+      const mapped = (x * (2.45 * x + 0.04)) / (x * (2.38 * x + 0.62) + 0.15);
+      return Math.min(250, Math.max(0, mapped * 255));
+    }
+
+    function overlayChannel(base255, blend01) {
+      const b = base255 / 255;
+      const out = b < 0.5
+        ? (2 * b * blend01)
+        : (1 - 2 * (1 - b) * (1 - blend01));
+      return out * 255;
+    }
+
+    // Build ColorOS Theme Bubbles
+    const paletteGrid = document.getElementById('paletteGrid');
+    function renderThemeBubbles() {
+      paletteGrid.innerHTML = '';
+      THEMES.forEach((t, idx) => {
+        const pill = document.createElement('div');
+        pill.className = 'theme-pill' + (idx === state.activePalette ? ' active' : '');
+        const grad = `linear-gradient(135deg, ${t.colors[0]}, ${t.colors[1]}, ${t.colors[2]})`;
+        pill.innerHTML = `
+          <span class="theme-dot" style="background:${grad}"></span>
+          <span class="theme-name">${t.name}</span>
+        `;
+        pill.addEventListener('click', () => {
+          state.activePalette = idx;
+          const coords = [
+            { x: 0.25, y: 0.28 },
+            { x: 0.55, y: 0.64 },
+            { x: 0.78, y: 0.34 },
+            { x: 0.32, y: 0.76 }
+          ];
+          state.orbs = t.colors.map((c, i) => ({
+            x: coords[i].x,
+            y: coords[i].y,
+            color: c,
+            radius: 0.60
+          }));
+          renderThemeBubbles();
+          renderColorCircles();
+          requestRender();
+        });
+        paletteGrid.appendChild(pill);
+      });
+    }
+
+    const colorDotsContainer = document.getElementById('colorDotsContainer');
+    function renderColorCircles() {
+      colorDotsContainer.innerHTML = '';
+      state.orbs.forEach((orb) => {
+        const wrap = document.createElement('label');
+        wrap.className = 'color-circle-wrap';
+        wrap.title = 'Tap to edit color';
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.value = orb.color;
+        input.addEventListener('input', (e) => {
+          orb.color = e.target.value;
+          requestRender();
+        });
+        wrap.appendChild(input);
+        colorDotsContainer.appendChild(wrap);
+      });
+    }
+
+    // =========================================================================
+    // STEP 1: RENDER BASE GRADIENT BUFFER
+    // =========================================================================
+    function renderBaseMeshForSpec(spec, targetW, targetH) {
+      baseCanvas.width = targetW;
+      baseCanvas.height = targetH;
+
+      const imgData = baseCtx.createImageData(targetW, targetH);
+      const data = imgData.data;
+
+      const orbList = spec.orbs.map((o) => ({
+        x: o.x,
+        y: o.y,
+        rgb: hexToRgb(o.color),
+        spreadSq: Math.pow((o.radius || 0.58) * 0.68, 2)
+      }));
+
+      const strokeList = (spec.paintStrokes || []).map(s => ({
+        x: s.x,
+        y: s.y,
+        rgb: hexToRgb(s.color),
+        spreadSq: 0.08
+      }));
+
+      const pushes = spec.liquifyPushes || [];
+      const darkFactor = 1.0 - (spec.darkMood || 0.48) * 0.70;
+      const gMode = spec.gradMode || 'mesh';
+      const nOrbs = orbList.length;
+
+      const beamAngle = ((spec.angle || 39) * Math.PI) / 180;
+      const cosB = Math.cos(beamAngle);
+      const sinB = Math.sin(beamAngle);
+      const blurWidth = 0.07 + (spec.satinBlur || 0.75) * 0.18;
+
+      for (let py = 0; py < targetH; py++) {
+        const ny0 = py / targetH;
+        for (let px = 0; px < targetW; px++) {
+          const nx0 = px / targetW;
+          let nx = nx0 + Math.sin(ny0 * 6.28) * 0.022;
+          let ny = ny0 + Math.cos(nx0 * 6.28) * 0.022;
+
+          for (let k = 0; k < pushes.length; k++) {
+            const p = pushes[k];
+            const dx = nx - p.x;
+            const dy = ny - p.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < p.rSq) {
+              const falloff = Math.exp(-d2 / (p.rSq * 0.45));
+              nx -= p.vx * falloff;
+              ny -= p.vy * falloff;
+            }
+          }
+
+          let r = 6, g = 8, b = 14;
+
+          if (gMode === 'beam') {
+            const cx = orbList[0] ? orbList[0].x : 0.56;
+            const cy = orbList[0] ? orbList[0].y : 0.28;
+            const u = (nx - cx) * cosB + (ny - cy) * sinB;
+            const v = -(nx - cx) * sinB + (ny - cy) * cosB;
+            const bowCurve = u + (v * v) * 0.26;
+
+            const cDeep = orbList[3] ? orbList[3].rgb : orbList[0].rgb;
+            const cMid  = orbList[2] ? orbList[2].rgb : orbList[0].rgb;
+            const cMain = orbList[1] ? orbList[1].rgb : orbList[0].rgb;
+            const cHigh = orbList[0] ? orbList[0].rgb : { r: 255, g: 119, b: 143 };
+
+            const wDeep = Math.exp(-(bowCurve + 0.24) * (bowCurve + 0.24) / (blurWidth * 2.4)) * darkFactor;
+            const wMid  = Math.exp(-(bowCurve + 0.06) * (bowCurve + 0.06) / (blurWidth * 1.4)) * darkFactor;
+            const wMain = Math.exp(-(bowCurve - 0.03) * (bowCurve - 0.03) / (blurWidth * 0.95)) * darkFactor;
+            const wFold2 = Math.exp(-(bowCurve + 0.38) * (bowCurve + 0.38) / (blurWidth * 0.75)) * (darkFactor * 0.6);
+
+            r += cDeep.r * wDeep * 0.55 + cMid.r * wMid * 0.75 + cMain.r * (wMain + wFold2 * 0.55);
+            g += cDeep.g * wDeep * 0.55 + cMid.g * wMid * 0.75 + cMain.g * (wMain + wFold2 * 0.55);
+            b += cDeep.b * wDeep * 0.55 + cMid.b * wMid * 0.75 + cMain.b * (wMain + wFold2 * 0.55);
+
+            const vFade = Math.exp(-(v * v) / 0.48);
+            const wPlus = Math.exp(-(bowCurve - 0.08) * (bowCurve - 0.08) / (blurWidth * 0.28)) * vFade * (spec.glassDepth || 0.8) * 0.95;
+
+            r += cHigh.r * wPlus;
+            g += cHigh.g * wPlus;
+            b += cHigh.b * wPlus;
+
+          } else if (gMode === 'mesh') {
+            for (let i = 0; i < nOrbs; i++) {
+              const o = orbList[i];
+              const dx = nx - o.x;
+              const dy = ny - o.y;
+              const w = Math.exp(-(dx * dx + dy * dy) / o.spreadSq) * darkFactor;
+              r = 255 - (255 - r) * (1 - (o.rgb.r / 255) * w);
+              g = 255 - (255 - g) * (1 - (o.rgb.g / 255) * w);
+              b = 255 - (255 - b) * (1 - (o.rgb.b / 255) * w);
+            }
+          } else if (gMode === 'aurora') {
+            for (let i = 0; i < nOrbs; i++) {
+              const o = orbList[i];
+              const waveY = o.y + Math.sin(nx * 4.5 + i * 1.7) * 0.16;
+              const dy = Math.abs(ny - waveY);
+              const dx = Math.abs(nx - o.x) * 0.45;
+              const w = Math.exp(-(dy * dy * 14 + dx * dx * 2) / o.spreadSq) * darkFactor;
+              r = 255 - (255 - r) * (1 - (o.rgb.r / 255) * w);
+              g = 255 - (255 - g) * (1 - (o.rgb.g / 255) * w);
+              b = 255 - (255 - b) * (1 - (o.rgb.b / 255) * w);
+            }
+          } else {
+            const coreDist = Math.abs(ny - 0.52);
+            const glow = Math.exp(-coreDist * coreDist * 10) * darkFactor;
+            const t = Math.max(0, Math.min(0.999, nx)) * (nOrbs - 1);
+            const idx0 = Math.floor(t);
+            const idx1 = Math.min(nOrbs - 1, idx0 + 1);
+            const frac = t - idx0;
+            const c0 = orbList[idx0].rgb, c1 = orbList[idx1].rgb;
+            r = (c0.r * (1 - frac) + c1.r * frac) * (0.25 + 0.75 * glow);
+            g = (c0.g * (1 - frac) + c1.g * frac) * (0.25 + 0.75 * glow);
+            b = (c0.b * (1 - frac) + c1.b * frac) * (0.25 + 0.75 * glow);
+          }
+
+          for (let i = 0; i < strokeList.length; i++) {
+            const s = strokeList[i];
+            const dx = nx - s.x;
+            const dy = ny - s.y;
+            const w = Math.exp(-(dx * dx + dy * dy) / s.spreadSq) * 0.85;
+            r = 255 - (255 - r) * (1 - (s.rgb.r / 255) * w);
+            g = 255 - (255 - g) * (1 - (s.rgb.g / 255) * w);
+            b = 255 - (255 - b) * (1 - (s.rgb.b / 255) * w);
+          }
+
+          const idx = (py * targetW + px) * 4;
+          data[idx]     = studioToneMap(r);
+          data[idx + 1] = studioToneMap(g);
+          data[idx + 2] = studioToneMap(b);
+          data[idx + 3] = 255;
+        }
+      }
+      return imgData;
+    }
+
+    function computeRamp(phase, profile, blurSmoothness) {
+      const cosineWave = Math.sin((phase - 0.25) * Math.PI * 2) * 0.5;
+      let raw = phase - 0.5;
+      if (profile === 'cylinder') raw = Math.sin((phase * 2 - 1) * (Math.PI / 2)) * 0.5;
+      else if (profile === 'sine') raw = cosineWave;
+      else if (profile === 'prism') raw = (phase < 0.5 ? phase * 2 : (1 - phase) * 2) - 0.5;
+
+      return raw * (1 - blurSmoothness * 0.80) + cosineWave * (blurSmoothness * 0.80);
+    }
+
+    function sampleBilinear(src, meshW, meshH, sxNorm, syNorm) {
+      let sampleX = sxNorm;
+      let sampleY = syNorm;
+      if (sampleX < 0.01) sampleX = 0.01 + Math.abs(sampleX - 0.01) * 0.5;
+      if (sampleX > 0.99) sampleX = 0.99 - Math.abs(sampleX - 0.99) * 0.5;
+      if (sampleY < 0.01) sampleY = 0.01 + Math.abs(sampleY - 0.01) * 0.5;
+      if (sampleY > 0.99) sampleY = 0.99 - Math.abs(sampleY - 0.99) * 0.5;
+
+      sampleX = Math.max(0, Math.min(0.999, sampleX));
+      sampleY = Math.max(0, Math.min(0.999, sampleY));
+
+      const sx = sampleX * (meshW - 1);
+      const sy = sampleY * (meshH - 1);
+      const x0 = Math.floor(sx), y0 = Math.floor(sy);
+      const x1 = Math.min(meshW - 1, x0 + 1), y1 = Math.min(meshH - 1, y0 + 1);
+      const fx = sx - x0, fy = sy - y0;
+
+      const i00 = (y0 * meshW + x0) * 4, i10 = (y0 * meshW + x1) * 4;
+      const i01 = (y1 * meshW + x0) * 4, i11 = (y1 * meshW + x1) * 4;
+
+      const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy);
+      const w01 = (1 - fx) * fy, w11 = fx * fy;
+
+      return {
+        r: src[i00] * w00 + src[i10] * w10 + src[i01] * w01 + src[i11] * w11,
+        g: src[i00 + 1] * w00 + src[i10 + 1] * w10 + src[i01 + 1] * w01 + src[i11 + 1] * w11,
+        b: src[i00 + 2] * w00 + src[i10 + 2] * w10 + src[i01 + 2] * w01 + src[i11 + 2] * w11
+      };
+    }
+
+    // Macro FBM Field for Vectricx, Marble, Wood & Grunge Modes
+    function buildMacroFbmField(spec, fieldW, fieldH) {
+      const f1Arr = new Float32Array(fieldW * fieldH);
+      const qxArr = new Float32Array(fieldW * fieldH);
+      const qyArr = new Float32Array(fieldW * fieldH);
+
+      const cells = Math.max(4, spec.stripCount || 18);
+      const seed = spec.seedOffset || 37;
+      const freq = Math.max(2.2, cells * 0.20);
+
+      for (let y = 0; y < fieldH; y++) {
+        const ny = y / fieldH;
+        for (let x = 0; x < fieldW; x++) {
+          const nx = x / fieldW;
+          const idx = y * fieldW + x;
+          const qx = fbm2D(nx * freq, ny * freq, seed);
+          const qy = fbm2D(nx * freq + 5.2, ny * freq + 1.3, seed + 41);
+          const warped = fbm2D(nx * freq + qx * 2.2, ny * freq + qy * 2.2, seed + 83);
+          f1Arr[idx] = warped;
+          qxArr[idx] = qx;
+          qyArr[idx] = qy;
+        }
+      }
+      return { f1Arr, qxArr, qyArr, fieldW, fieldH };
+    }
+
+    function sampleMacroBilinear(field, nx, ny) {
+      const sx = Math.max(0, Math.min(0.999, nx)) * (field.fieldW - 1);
+      const sy = Math.max(0, Math.min(0.999, ny)) * (field.fieldH - 1);
+      const x0 = Math.floor(sx), y0 = Math.floor(sy);
+      const x1 = Math.min(field.fieldW - 1, x0 + 1);
+      const y1 = Math.min(field.fieldH - 1, y0 + 1);
+      const fx = sx - x0, fy = sy - y0;
+
+      const i00 = y0 * field.fieldW + x0, i10 = y0 * field.fieldW + x1;
+      const i01 = y1 * field.fieldW + x0, i11 = y1 * field.fieldW + x1;
+
+      const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy);
+      const w01 = (1 - fx) * fy, w11 = fx * fy;
+
+      return {
+        f1: field.f1Arr[i00] * w00 + field.f1Arr[i10] * w10 + field.f1Arr[i01] * w01 + field.f1Arr[i11] * w11,
+        qx: field.qxArr[i00] * w00 + field.qxArr[i10] * w10 + field.qxArr[i01] * w01 + field.qxArr[i11] * w11,
+        qy: field.qyArr[i00] * w00 + field.qyArr[i10] * w10 + field.qyArr[i01] * w01 + field.qyArr[i11] * w11
+      };
+    }
+
+    // =========================================================================
+    // STEP 2: MASTER 38-STYLE SHADER (NATIVE 4500x3000 CRISP PIXEL QUALITY)
+    // =========================================================================
+    function renderSpecToCanvas(spec, targetCanvas, width, height, rawOnly = false) {
+      targetCanvas.width = width;
+      targetCanvas.height = height;
+      const targetCtx = targetCanvas.getContext('2d');
+
+      const meshScale = width > 1200 ? 0.20 : 0.55;
+      const meshW = Math.max(160, Math.round(width * meshScale));
+      const meshH = Math.max(110, Math.round(height * meshScale));
+      const baseImg = renderBaseMeshForSpec(spec, meshW, meshH);
+      const src = baseImg.data;
+
+      if (rawOnly) {
+        const tmp = document.createElement('canvas');
+        tmp.width = meshW;
+        tmp.height = meshH;
+        tmp.getContext('2d').putImageData(baseImg, 0, 0);
+        targetCtx.drawImage(tmp, 0, 0, width, height);
+        return;
+      }
+
+      const outImg = targetCtx.createImageData(width, height);
+      const dst = outImg.data;
+
+      const angleRad = ((spec.angle || 0) * Math.PI) / 180;
+      const cosA = Math.cos(angleRad);
+      const sinA = Math.sin(angleRad);
+
+      const strips = Math.max(4, spec.stripCount || 24);
+      const depth = spec.glassDepth || 0.84;
+      const gloss = spec.satinBlur || 0.78;
+      const geom = spec.stripGeom || 'lowPoly3D';
+      const profile = spec.profile || 'cylinder';
+      const seed = spec.seedOffset || 37;
+      const morph = spec.morphVariant || 0;
+      const aspect = width / height;
+
+      const c0 = hexToRgb(spec.orbs[0] ? spec.orbs[0].color : '#ff2a85');
+      const c1 = hexToRgb(spec.orbs[1] ? spec.orbs[1].color : '#6366f1');
+      const c2 = hexToRgb(spec.orbs[2] ? spec.orbs[2].color : '#00d2ff');
+      const c3 = hexToRgb(spec.orbs[3] ? spec.orbs[3].color : '#1e0536');
+
+      // Populate Voronoi Seed LUT for Cellular & LowPoly modes
+      if (spec.surfaceMode === 'cellular' || geom === 'lowPoly3D') {
+        populateVoronoiSeedLUT(seed);
+      }
+
+      // Precompute Macro FBM Field for Vectricx, Marble, Wood & GrungeBrush
+      let vecField = null;
+      if (spec.surfaceMode === 'vectricx' || geom === 'luxuryMarble' || geom === 'woodGrain' || geom === 'grungeBrush') {
+        const fw = width > 1200 ? 520 : 260;
+        const fh = Math.max(90, Math.round(fw / aspect));
+        vecField = buildMacroFbmField(spec, fw, fh);
+      }
+
+      const cellScaleY = Math.max(3.0, strips * 0.42);
+      const cellScaleX = cellScaleY * aspect;
+
+      const isPureDotMode = spec.surfaceMode === 'dotSatin' && geom === 'none';
+      const hasDots = (spec.surfaceMode === 'dotSatin' || spec.surfaceMode === 'combo') && spec.dotSize > 0.01 && spec.dotOpacity > 0.01;
+      const dotCellsAcross = Math.max(32, Math.round(140 - spec.dotSize * 105));
+      const cellPx = width / dotCellsAcross;
+      const dotMix = spec.dotOpacity;
+      const isSquareLed = spec.dotShape === 'square';
+
+      for (let y = 0; y < height; y++) {
+        const ny = y / height;
+        const my = y & 511;
+        const mRow = my << 9;
+
+        for (let x = 0; x < width; x++) {
+          const nx = x / width;
+          const mx = x & 511;
+          const mIdx = mRow | mx;
+          const microDetail = microDetailLUT[mIdx];
+          const microDx = microSlopeXLUT[mIdx];
+          const microDy = microSlopeYLUT[mIdx];
+
+          // Rotated normalized coordinates
+          const uRot = (nx - 0.5) * cosA + (ny - 0.5) * sinA + 0.5;
+          const vRot = -(nx - 0.5) * sinA + (ny - 0.5) * cosA + 0.5;
+
+          let r = 0, g = 0, b = 0;
+
+          if (spec.surfaceMode === 'vector3d') {
+            // =================================================================
+            // 1. ANDY CREATOR HINDI VECTOR 3D PLAYLIST ENGINES (9 STYLES)
+            // =================================================================
+            const col = sampleBilinear(src, meshW, meshH, nx, ny);
+
+            if (geom === 'lowPoly3D') {
+              // Video #5 (-ZaqTFwcU-4): Abstract Triangular Polygonal Facet 3D Background
+              const polyScaleY = Math.max(4, strips * 0.36);
+              const polyScaleX = polyScaleY * aspect;
+              const lp = evalLowPoly3D(uRot * polyScaleX + 5, vRot * polyScaleY + 5);
+
+              // 3D Directional Facet Lighting + Per-Triangle Linear Gradient + Crisp Edge Bevel
+              const lightDirX = Math.cos(angleRad + morph * 0.7);
+              const lightDirY = Math.sin(angleRad + morph * 0.7);
+              const facetDot = (lp.slopeX * lightDirX + lp.slopeY * lightDirY) * 1.45 * depth;
+              const facetShade = Math.max(0.22, Math.min(1.55, 0.78 + facetDot + (lp.linGrad - 0.5) * 0.42 * gloss));
+              const edgeLine = Math.min(1, Math.pow(lp.edgeDist * 18.0, 0.65));
+              const edgeRim = Math.exp(-Math.pow(lp.edgeDist - 0.04, 2) / 0.0012) * gloss * 42;
+
+              // Sample color per facet center for true vector polygon look
+              const facetCol = sampleBilinear(src, meshW, meshH, nx + lp.slopeX * 0.08, ny + lp.slopeY * 0.08);
+              r = (facetCol.r * facetShade + edgeRim) * (0.45 + 0.55 * edgeLine);
+              g = (facetCol.g * facetShade + edgeRim) * (0.45 + 0.55 * edgeLine);
+              b = (facetCol.b * facetShade + edgeRim) * (0.45 + 0.55 * edgeLine);
+
+            } else if (geom === 'fluidLava') {
+              // Video #2 (KQViQfWdVaE): Abstract Fluid Background with 3D Inner-Glow Waves & Droplets
+              let waveField = -1.0;
+              let layerId = 0;
+              const numLayers = 3 + (morph % 3);
+              for (let k = 0; k < numLayers; k++) {
+                const freq = 2.2 + k * 0.9;
+                const phaseOff = seed * 0.1 + k * 2.1 + morph;
+                const waveBoundary = 0.22 + k * 0.22 + Math.sin(uRot * freq * Math.PI + phaseOff) * 0.14 + Math.cos(uRot * (freq * 1.7) * Math.PI - phaseOff) * 0.06;
+                const d = waveBoundary - vRot;
+                if (d > 0) {
+                  waveField = d;
+                  layerId = k + 1;
+                }
+              }
+              // Floating 3D fluid droplets (orbs)
+              for (let k = 0; k < 4; k++) {
+                const o = spec.orbs[k % spec.orbs.length];
+                const dx = (nx - o.x) * aspect;
+                const dy = ny - o.y;
+                const rad = 0.09 + (k % 2) * 0.045;
+                const dist = Math.hypot(dx, dy);
+                if (dist < rad) {
+                  waveField = rad - dist;
+                  layerId = k + 2;
+                }
+              }
+
+              if (waveField > 0) {
+                // Inside 3D fluid wave/blob: inner rim glow + 3D spherical shading
+                const innerRim = Math.exp(-waveField * (26 - gloss * 14)) * gloss * 0.95;
+                const bodyShade = 0.38 + 0.62 * Math.min(1, waveField * 6.5);
+                const layerCol = (layerId % 2 === 1) ? c0 : c2;
+                r = col.r * bodyShade + layerCol.r * innerRim * 0.85;
+                g = col.g * bodyShade + layerCol.g * innerRim * 0.85;
+                b = col.b * bodyShade + layerCol.b * innerRim * 0.85;
+              } else {
+                // Deep dark fluid backdrop with soft ambient glow
+                r = col.r * 0.24 + c3.r * 0.35;
+                g = col.g * 0.24 + c3.g * 0.35;
+                b = col.b * 0.24 + c3.b * 0.35;
+              }
+
+            } else if (geom === 'shapeBlend') {
+              // Video #1 (Zs1HJHUPKWs): Fantastic Shape Layer Blend Effect on Pitch-Black Canvas
+              let accR = 6, accG = 8, accB = 14;
+              const steps = Math.max(8, Math.round(strips * 0.8));
+              for (let k = 0; k < 4; k++) {
+                const o = spec.orbs[k % spec.orbs.length];
+                const oRgb = hexToRgb(o.color);
+                const dx = (nx - o.x) * aspect;
+                const dy = ny - o.y;
+                const ang = Math.atan2(dy, dx);
+                const lobeRadius = 0.24 + 0.08 * Math.sin(ang * (2 + (k + morph) % 3) + seed * 0.05) + 0.04 * Math.cos(ang * 5 - k);
+                const dist = Math.hypot(dx, dy);
+                const delta = Math.abs(dist - lobeRadius);
+                // Quantized Illustrator Blend Tool steps + smooth neon falloff
+                const blendEnv = Math.exp(-delta * delta * (38 - depth * 22));
+                const stepBands = 0.72 + 0.28 * Math.cos(delta * steps * Math.PI * 2);
+                const w = blendEnv * stepBands * (0.65 + gloss * 0.55);
+                accR = 255 - (255 - accR) * (1 - (oRgb.r / 255) * Math.min(0.95, w));
+                accG = 255 - (255 - accG) * (1 - (oRgb.g / 255) * Math.min(0.95, w));
+                accB = 255 - (255 - accB) * (1 - (oRgb.b / 255) * Math.min(0.95, w));
+              }
+              r = accR; g = accG; b = accB;
+
+            } else if (geom === 'furyFeather') {
+              // Video #3 (EoEQ9_MoOQg): Abstract Colourful Fury Painting Feather Effect
+              const spineY = 0.5 + 0.24 * Math.sin(uRot * 4.2 + seed * 0.04 + morph);
+              const distFromSpine = vRot - spineY;
+              const absD = Math.abs(distFromSpine);
+              // High-frequency Roughen fur/feather filaments radiating from the curved spine
+              const furFreq = 90 + strips * 3.2;
+              const strandPhase = uRot * furFreq + Math.sin(absD * 28.0 + uRot * 12.0) * 3.5;
+              const strands = 0.5 + 0.5 * Math.sin(strandPhase);
+              const fineHairs = 0.5 + 0.5 * Math.cos(strandPhase * 2.7 + microDetail * 4.0);
+              const plumeMask = Math.exp(-absD * absD * (11.0 - depth * 6.5));
+              const spineCore = Math.exp(-absD * absD * 48.0) * gloss * 0.55;
+
+              const furCol = sampleBilinear(src, meshW, meshH, uRot, 0.5 + distFromSpine * 0.7);
+              const fiberLight = (0.28 + 0.72 * strands * fineHairs) * plumeMask + spineCore;
+              r = furCol.r * (0.18 + fiberLight * 1.15);
+              g = furCol.g * (0.18 + fiberLight * 1.15);
+              b = furCol.b * (0.18 + fiberLight * 1.15);
+
+            } else if (geom === 'luxuryFloral') {
+              // Video #4 (lkM_zfK6G0c): Abstract Floral Luxuries Premium 3D Mandala Rosettes
+              const centers = [
+                { cx: 0.12, cy: 0.16, maxR: 0.44 },
+                { cx: 0.88, cy: 0.84, maxR: 0.46 },
+                { cx: 0.86, cy: 0.18, maxR: 0.30 },
+                { cx: 0.15, cy: 0.82, maxR: 0.32 }
+              ];
+              let floralShade = 0;
+              let petalRim = 0;
+              const numPetals = 12 + (strips % 10);
+
+              for (let k = 0; k < centers.length; k++) {
+                const c = centers[k];
+                const dx = (nx - c.cx) * aspect;
+                const dy = ny - c.cy;
+                const dist = Math.hypot(dx, dy);
+                if (dist < c.maxR) {
+                  const theta = Math.atan2(dy, dx) + angleRad;
+                  const ringFreq = 7.0;
+                  const ringPos = (dist / c.maxR) * ringFreq;
+                  const ringIdx = Math.floor(ringPos);
+                  const ringFrac = ringPos - ringIdx;
+                  const petalWave = Math.pow(Math.abs(Math.cos((theta + ringIdx * 0.26) * (numPetals * 0.5))), 0.65);
+                  const petalEdge = ringFrac - petalWave * 0.78;
+                  const shadow = Math.exp(-Math.max(0, petalEdge) * 14.0);
+                  const tipGleam = Math.exp(-Math.pow(petalEdge, 2) / 0.008) * gloss;
+                  floralShade = Math.max(floralShade, (0.35 + 0.75 * (1 - ringFrac * 0.55)) * shadow);
+                  petalRim = Math.max(petalRim, tipGleam * (1.0 - dist / c.maxR));
+                }
+              }
+              const centerGlow = Math.exp(- (Math.pow(nx - 0.5, 2) + Math.pow(ny - 0.5, 2)) * 4.5);
+              const baseShade = 0.30 + 0.55 * centerGlow;
+              const mix = floralShade > 0.05 ? floralShade : baseShade;
+              r = col.r * mix + c0.r * petalRim * 0.55;
+              g = col.g * mix + c0.g * petalRim * 0.55;
+              b = col.b * mix + c0.b * petalRim * 0.55;
+
+            } else if (geom === 'stripes3DCube') {
+              // Video #6 (xa757bS80jE): Colourful Stripes Abstract 3D Folded Corner Background
+              const foldX = 0.46 + ((morph % 3) - 1) * 0.08;
+              let stripeCoord, wallShadow;
+              if (uRot < foldX) {
+                // Left perspective wall
+                stripeCoord = vRot + (foldX - uRot) * 0.58;
+                wallShadow = 0.68 - Math.exp(-(foldX - uRot) * 9.0) * 0.28 * depth;
+              } else {
+                // Right illuminated wall
+                stripeCoord = vRot - (uRot - foldX) * 0.42;
+                wallShadow = 1.05 - Math.exp(-(uRot - foldX) * 12.0) * 0.18 * depth;
+              }
+              const sPos = stripeCoord * (strips * 0.65);
+              const phase = sPos - Math.floor(sPos);
+              const barProfile = Math.sin(phase * Math.PI);
+              const neonEdge = Math.exp(-Math.pow(phase - 0.5, 2) / 0.025) * gloss * 0.55;
+              const sCol = sampleBilinear(src, meshW, meshH, nx, stripeCoord % 1);
+              r = (sCol.r * (0.22 + 0.85 * barProfile) + c0.r * neonEdge) * wallShadow;
+              g = (sCol.g * (0.22 + 0.85 * barProfile) + c0.g * neonEdge) * wallShadow;
+              b = (sCol.b * (0.22 + 0.85 * barProfile) + c0.b * neonEdge) * wallShadow;
+
+            } else if (geom === 'radialSunburst') {
+              // Video #7 (CHO3i8kTMuA): Luxury Vector 3D Radial Starburst & Center Emblem
+              const dx = (nx - 0.5) * aspect;
+              const dy = ny - 0.5;
+              const dist = Math.hypot(dx, dy);
+              const theta = Math.atan2(dy, dx) + angleRad + Math.sin(dist * 6.0) * 0.12;
+              const rayCount = Math.max(16, strips * 2);
+              const rayWave = 0.5 + 0.5 * Math.cos(theta * rayCount);
+              const raySharp = Math.pow(rayWave, 1.8 - gloss * 0.9);
+
+              // Central 3D Luxury Ring Emblem (like CHO3i8kTMuA thumbnail)
+              const innerRadius = 0.18;
+              let shade;
+              if (dist < innerRadius) {
+                const ringEdge = Math.abs(dist - innerRadius * 0.88);
+                const goldRim = Math.exp(-ringEdge * ringEdge / 0.0004) * gloss * 0.85;
+                shade = 0.38 + 0.52 * (1 - dist / innerRadius) + goldRim;
+              } else {
+                const dropShadow = 1.0 - 0.55 * Math.exp(-(dist - innerRadius) * 22.0);
+                shade = (0.24 + 0.88 * raySharp * Math.exp(-dist * 0.55)) * dropShadow;
+              }
+              r = col.r * shade + c0.r * Math.pow(raySharp, 4) * 0.25;
+              g = col.g * shade + c0.g * Math.pow(raySharp, 4) * 0.25;
+              b = col.b * shade + c0.b * Math.pow(raySharp, 4) * 0.25;
+
+            } else if (geom === 'circleCutout') {
+              // Video #8 (CxxWIv17sUM): Circle Shape Abstract 3D Paper-Cut Rings
+              const dx = (nx - 0.5) * aspect;
+              const dy = ny - 0.5;
+              const dist = Math.hypot(dx, dy);
+              const rings = Math.max(5, Math.round(strips * 0.45));
+              const rPos = dist * rings;
+              const ringIdx = Math.floor(rPos);
+              const rFrac = rPos - ringIdx;
+
+              // Diagonal split across the concentric circles (like CxxWIv17sUM)
+              const splitSide = (dx * cosA + dy * sinA) >= 0 ? 1 : -1;
+              const gradAlongRing = (( -dx * sinA + dy * cosA ) * splitSide + 0.5);
+              // 3D Drop shadow cast at each concentric ring step
+              const stepShadow = 1.0 - (0.48 * depth) * Math.exp(-rFrac * 8.5);
+              const stepBevel = Math.exp(-Math.pow(rFrac - 0.06, 2) / 0.0025) * gloss * 0.42;
+              const ringShade = (0.38 + 0.68 * Math.max(0, Math.min(1, gradAlongRing))) * stepShadow + stepBevel;
+
+              const ringCol = sampleBilinear(src, meshW, meshH, nx + (ringIdx % 2) * 0.12 * splitSide, ny);
+              r = ringCol.r * ringShade;
+              g = ringCol.g * ringShade;
+              b = ringCol.b * ringShade;
+
+            } else {
+              // Particle Wave (DwGiR_Iw2B8 & m4sCGb5BkIA): 3D Particle Wave Technology Mesh
+              const gridFreqX = Math.max(24, strips * 1.6) * aspect;
+              const gridFreqY = Math.max(18, strips * 1.2);
+              const waveHeight = Math.sin(uRot * 7.5 + vRot * 4.2 + seed * 0.05) * Math.cos(vRot * 5.5 - uRot * 3.0);
+              const warpedV = vRot + waveHeight * 0.12 * depth;
+
+              const gx = (uRot * gridFreqX) % 1;
+              const gy = (warpedV * gridFreqY) % 1;
+              const pd = Math.hypot(gx - 0.5, gy - 0.5);
+              const dotRadius = 0.16 + 0.22 * (0.5 + 0.5 * waveHeight);
+              const particleGlow = Math.exp(-(pd * pd) / (dotRadius * dotRadius * 0.45)) * (0.5 + 0.7 * (0.5 + 0.5 * waveHeight));
+              const ambientWave = 0.18 + 0.32 * (0.5 + 0.5 * waveHeight);
+
+              r = col.r * ambientWave + (col.r * 0.5 + c0.r * 0.5 + 35) * particleGlow * gloss;
+              g = col.g * ambientWave + (col.g * 0.5 + c0.g * 0.5 + 35) * particleGlow * gloss;
+              b = col.b * ambientWave + (col.b * 0.5 + c0.b * 0.5 + 35) * particleGlow * gloss;
+            }
+
+          } else if (spec.surfaceMode === 'stockViral') {
+            // =================================================================
+            // 2. ADOBE STOCK VIRAL VIDEO TUTORIAL ENGINES (5 STYLES)
+            // =================================================================
+            const col = sampleBilinear(src, meshW, meshH, nx, ny);
+
+            if (geom === 'neonVertical') {
+              // Video 2 (IAtFFgPEaHk by alamin antor): Neon Vertical Stripes + Freeform Mesh + Color Dodge
+              const barPos = uRot * strips;
+              const phase = barPos - Math.floor(barPos);
+              // Black-to-White gradient inside each vertical bar (with morph variations)
+              const symPhase = (morph % 2 === 1) ? (1.0 - Math.abs(phase * 2 - 1)) : phase;
+              const barGrad = Math.pow(symPhase, 1.45);
+              // Color Dodge + Overlay blend over the Freeform Mesh base
+              const dodgeDenom = Math.max(0.14, 1.0 - barGrad * 0.78 * depth);
+              const neonBeam = Math.exp(-Math.pow(symPhase - 0.92, 2) / 0.006) * gloss * 55;
+              const darkGroove = Math.pow(symPhase, 0.45);
+
+              r = Math.min(245, (col.r * darkGroove) / dodgeDenom * 0.58 + neonBeam);
+              g = Math.min(245, (col.g * darkGroove) / dodgeDenom * 0.58 + neonBeam);
+              b = Math.min(245, (col.b * darkGroove) / dodgeDenom * 0.58 + neonBeam);
+
+            } else if (geom === 'diffCross') {
+              // Video 1 (vh4ubUMRqg0 by Tech MultiVerse CTG): Multi-Stop Difference Blend X-Gradient
+              const t1 = Math.max(0, Math.min(1, uRot));
+              const t2 = Math.max(0, Math.min(1, vRot));
+              const t3 = Math.max(0, Math.min(1, (uRot + vRot) * 0.5));
+
+              // Layer 1 (90 deg), Layer 2 (0 deg), Layer 3 (45 deg)
+              const l1R = c0.r * (1 - t1) + c1.r * t1;
+              const l1G = c0.g * (1 - t1) + c1.g * t1;
+              const l1B = c0.b * (1 - t1) + c1.b * t1;
+
+              const l2R = c1.r * (1 - t2) + c2.r * t2;
+              const l2G = c1.g * (1 - t2) + c2.g * t2;
+              const l2B = c1.b * (1 - t2) + c2.b * t2;
+
+              // First Difference Blend: |L1 - L2|
+              const d1R = Math.abs(l1R - l2R);
+              const d1G = Math.abs(l1G - l2G);
+              const d1B = Math.abs(l1B - l2B);
+
+              // Second Difference Blend with diagonal wave modulation
+              const wave3 = 0.5 + 0.5 * Math.sin(t3 * Math.PI * (2 + (morph % 3)));
+              const l3R = (c2.r * (1 - wave3) + c0.r * wave3) * depth * 0.85;
+              const l3G = (c2.g * (1 - wave3) + c0.g * wave3) * depth * 0.85;
+              const l3B = (c2.b * (1 - wave3) + c0.b * wave3) * depth * 0.85;
+
+              r = Math.min(245, Math.abs(d1R - l3R) * 1.35 + col.r * 0.22);
+              g = Math.min(245, Math.abs(d1G - l3G) * 1.35 + col.g * 0.22);
+              b = Math.min(245, Math.abs(d1B - l3B) * 1.35 + col.b * 0.22);
+
+            } else if (geom === 'grungeBrush') {
+              // Video 3 (rkyq_hq9F5o by Graphics Design With Nahid): Hand-Painted Grunge Bristle Brush Pack
+              const vf = vecField ? sampleMacroBilinear(vecField, nx, ny) : { f1: 0.5, qx: 0.5, qy: 0.5 };
+              const bristleU = Math.floor((uRot * 120 + vf.qx * 16) * 8) & 511;
+              const bristleV = Math.floor((vRot * 32 + vf.qy * 6) * 8) & 511;
+              const bristle = microDetailLUT[(bristleV << 9) | bristleU];
+
+              const strokeBand = Math.sin(vRot * (8 + strips * 0.25) + vf.qx * 4.5);
+              const dryEdge = bristle + strokeBand * 0.55;
+              const strokeCol = dryEdge > 0.62 ? c0 : (dryEdge > 0.25 ? c1 : (dryEdge > -0.15 ? c2 : c3));
+              const tooth = 0.48 + 0.68 * bristle;
+
+              r = (strokeCol.r * 0.68 + col.r * 0.32) * tooth;
+              g = (strokeCol.g * 0.68 + col.g * 0.32) * tooth;
+              b = (strokeCol.b * 0.68 + col.b * 0.32) * tooth;
+
+            } else if (geom === 'woodGrain') {
+              // Video 4 (rIWT8J1VU7s by Ridigital Pro): Render Fibers + Liquify Wood Knots + Fine Noise
+              const vf = vecField ? sampleMacroBilinear(vecField, nx, ny) : { f1: 0.5, qx: 0.5, qy: 0.5 };
+              // Wood Knot distortion centers
+              const k1x = 0.32 + (morph % 3) * 0.18, k1y = 0.42;
+              const k2x = 0.72 - (morph % 2) * 0.22, k2y = 0.64;
+              const d1 = Math.hypot((uRot - k1x) * 1.8, vRot - k1y);
+              const d2 = Math.hypot((uRot - k2x) * 1.8, vRot - k2y);
+              const knotPush = 0.14 * Math.exp(-d1 * d1 * 18.0) + 0.11 * Math.exp(-d2 * d2 * 22.0);
+
+              const ringCoord = (vRot + knotPush + (vf.f1 - 0.5) * 0.16 * depth) * (14 + strips * 0.5);
+              const woodRing = 0.5 + 0.5 * Math.sin(ringCoord * Math.PI * 2);
+              // Stretched longitudinal wood fibers
+              const fiberIdx = (((y & 511) >> 2) << 9) | ((x * 5) & 511);
+              const woodFiber = microDetailLUT[fiberIdx];
+              const grainVal = 0.28 + 0.58 * woodRing + 0.32 * (woodFiber - 0.5);
+
+              r = col.r * grainVal;
+              g = col.g * grainVal * 0.92;
+              b = col.b * grainVal * 0.84;
+
+            } else {
+              // Video 5 (TRPjcePow6w by Ridigital Pro): Luxury Marble (Difference Clouds + Levels + Screen Veins)
+              const vf = vecField ? sampleMacroBilinear(vecField, nx, ny) : { f1: 0.5, qx: 0.5, qy: 0.5 };
+              const vfFlip = vecField ? sampleMacroBilinear(vecField, 1.0 - nx, 1.0 - ny) : vf;
+
+              // Difference Clouds creases: |cloud - 0.5| -> sharp branching mineral veins
+              const diff1 = Math.abs(vf.f1 - 0.48 + (microDetail - 0.5) * 0.08);
+              const diff2 = Math.abs(vfFlip.qx - 0.50 + (microDetail - 0.5) * 0.06);
+              const primaryVein = Math.exp(-diff1 * (24.0 - gloss * 10.0));
+              const secondaryVein = Math.exp(-diff2 * 32.0) * 0.65;
+              const veinStrength = Math.min(1.0, (primaryVein + secondaryVein) * depth * 1.15);
+
+              const marbleBody = 0.35 + 0.55 * vf.f1;
+              r = col.r * marbleBody * (1.0 - veinStrength * 0.45) + c0.r * veinStrength * 0.92;
+              g = col.g * marbleBody * (1.0 - veinStrength * 0.45) + c0.g * veinStrength * 0.92;
+              b = col.b * marbleBody * (1.0 - veinStrength * 0.45) + c0.b * veinStrength * 0.92;
+            }
+
+          } else if (spec.surfaceMode === 'cellular') {
+            // =================================================================
+            // 3. NATIVE-PIXEL 4500x3000 VORONOI / CELLULAR ENGINE (6647.jpg)
+            // =================================================================
+            const warpX = Math.sin(ny * 10.0 + nx * 6.0) * 0.18;
+            const warpY = Math.cos(nx * 10.0 + ny * 6.0) * 0.18;
+            const vf = fastVoronoiAt(nx * cellScaleX + warpX + 10, ny * cellScaleY + warpY + 10);
+            const col = sampleBilinear(src, meshW, meshH, nx, ny);
+
+            if (geom === 'cellGlow') {
+              const sphereGlow = Math.exp(-vf.f1 * vf.f1 * (3.0 - gloss * 1.2)) * (0.45 + depth * 0.85);
+              const hotCenter = Math.exp(-vf.f1 * vf.f1 * 16.0) * gloss * 0.55;
+              const webShadow = Math.min(1, 0.28 + vf.edge * 3.8);
+              r = col.r * sphereGlow * webShadow + (c0.r * 0.6 + 90) * hotCenter;
+              g = col.g * sphereGlow * webShadow + (c0.g * 0.6 + 90) * hotCenter;
+              b = col.b * sphereGlow * webShadow + (c0.b * 0.6 + 90) * hotCenter;
+
+            } else if (geom === 'voronoi3D') {
+              const seamMask = Math.min(1, Math.pow(Math.max(0, vf.edge * 4.2), 0.72));
+              const facetLight = 0.28 + 0.98 * (1.0 - vf.f1 * 0.88) * (0.52 + 0.48 * vf.id);
+              const ridgeGlint = Math.exp(-Math.pow(vf.edge - 0.13, 2) / 0.0045) * gloss * 65;
+              r = (col.r * facetLight + ridgeGlint) * seamMask;
+              g = (col.g * facetLight + ridgeGlint) * seamMask;
+              b = (col.b * facetLight + ridgeGlint) * seamMask;
+
+            } else if (geom === 'neonVeins') {
+              const vein = Math.exp(-vf.edge * vf.edge * (75 - gloss * 40)) * depth * 1.25;
+              const innerGlow = 0.22 + 0.45 * (1.0 - vf.f1);
+              r = col.r * innerGlow + (c0.r * 0.7 + 65) * vein;
+              g = col.g * innerGlow + (c0.g * 0.7 + 65) * vein;
+              b = col.b * innerGlow + (c0.b * 0.7 + 65) * vein;
+
+            } else if (geom === 'mosaicTiles') {
+              const groutLine = Math.min(1, Math.pow(vf.edge * 11.0, 0.85));
+              const stoneShade = (vf.id - 0.5) * 72 * depth;
+              const stoneBevel = Math.min(1.12, 0.52 + vf.edge * 1.8 + microDx * 16);
+              r = Math.max(0, (col.r + stoneShade) * stoneBevel * groutLine);
+              g = Math.max(0, (col.g + stoneShade * 0.55) * stoneBevel * groutLine);
+              b = Math.max(0, (col.b - stoneShade * 0.45) * stoneBevel * groutLine);
+
+            } else if (geom === 'bokehSpore') {
+              const spore = Math.exp(-vf.f1 * vf.f1 * 9.5) * (0.3 + vf.id * 1.2) * depth;
+              const halo = Math.exp(-vf.f1 * vf.f1 * 2.4) * 0.45;
+              r = col.r * halo + (col.r * 0.65 + c0.r * 0.35 + 25) * spore;
+              g = col.g * halo + (col.g * 0.65 + c0.g * 0.35 + 25) * spore;
+              b = col.b * halo + (col.b * 0.65 + c0.b * 0.35 + 25) * spore;
+
+            } else {
+              const webMembrane = Math.exp(-Math.pow(vf.f1 - 0.44, 2) / 0.032) * (0.65 + gloss * 0.65);
+              const darkCenter = Math.min(1, Math.pow(vf.f1 * 2.1, 1.35));
+              r = col.r * darkCenter * (0.25 + webMembrane) + c0.r * webMembrane * 0.35;
+              g = col.g * darkCenter * (0.25 + webMembrane) + c0.g * webMembrane * 0.35;
+              b = col.b * darkCenter * (0.25 + webMembrane) + c0.b * webMembrane * 0.35;
+            }
+
+          } else if (spec.surfaceMode === 'vectricx' && vecField) {
+            // =================================================================
+            // 4. 6645.jpg & 6646.jpg VECTRICX COLLECTION (Dark Nebula Fixed!)
+            // =================================================================
+            const vf = sampleMacroBilinear(vecField, nx, ny);
+            const hVal = vf.f1 + (microDetail - 0.5) * 0.045;
+            const col = sampleBilinear(src, meshW, meshH, nx + (vf.qx - 0.5) * 0.16, ny + (vf.qy - 0.5) * 0.16);
+
+            if (geom === 'topoLiquid') {
+              const waveVal = Math.sin(hVal * (16 + strips * 0.55) * Math.PI);
+              const contour = 0.5 + 0.5 * waveVal;
+              const chromeHighlight = Math.pow(contour, 5.5) * gloss * 72;
+              const deepGroove = 0.22 + 0.82 * contour;
+              r = col.r * deepGroove + chromeHighlight;
+              g = col.g * deepGroove + chromeHighlight;
+              b = col.b * deepGroove + chromeHighlight;
+
+            } else if (geom === 'magmaRock') {
+              const vfR = sampleMacroBilinear(vecField, nx + 0.003, ny);
+              const vfD = sampleMacroBilinear(vecField, nx, ny + 0.003);
+              const slopeX = (vfR.f1 - vf.f1) * 42 * depth + microDx * 26 * depth;
+              const slopeY = (vfD.f1 - vf.f1) * 42 * depth + microDy * 26 * depth;
+              const lambert = Math.max(0.12, Math.min(1.65, 0.68 + slopeX * 0.85 + slopeY * 0.68));
+              const specGlint = Math.pow(Math.max(0, lambert - 0.95), 2.2) * gloss * 78;
+              r = col.r * lambert + specGlint;
+              g = col.g * lambert + specGlint * 0.86;
+              b = col.b * lambert + specGlint * 0.72;
+
+            } else if (geom === 'canyonRidge') {
+              const tPos = (ny + (hVal - 0.5) * 0.20 * depth) * (strips * 0.45);
+              const phase = tPos - Math.floor(tPos);
+              const rimGleam = Math.exp(-Math.pow(phase - 0.11, 2) / 0.005) * gloss * 75;
+              const shadowDrop = Math.pow(phase, 2.1) * 0.78;
+              r = col.r * (1.02 - shadowDrop) + rimGleam;
+              g = col.g * (1.02 - shadowDrop) + rimGleam;
+              b = col.b * (1.02 - shadowDrop) + rimGleam;
+
+            } else if (geom === 'nebulaCloud') {
+              // FIXED Dark Nebula: Deep cosmic void + volumetric glowing nebula filaments (ZERO white blowout!)
+              const cloudBillow = Math.pow(Math.max(0, Math.min(1, hVal * 1.25 - 0.12)), 1.75) * (0.45 + depth * 0.68);
+              const filamentCrease = Math.exp(-Math.abs(vf.qx - vf.qy) * 14.0) * gloss * 0.62;
+              const starDust = Math.pow(microDetail, 4.0) * 38 * gloss;
+              r = col.r * cloudBillow + c0.r * filamentCrease + starDust;
+              g = col.g * cloudBillow + c0.g * filamentCrease + starDust;
+              b = col.b * cloudBillow + c0.b * filamentCrease + starDust;
+
+            } else if (geom === 'streakBlur') {
+              const vStreak = Math.sin(nx * (65 + strips * 2) + vf.qx * 14) * 0.5 + 0.5;
+              const streakMod = (0.30 + 0.88 * vStreak) * (0.35 + vf.f1 * 0.95);
+              r = col.r * streakMod;
+              g = col.g * streakMod;
+              b = col.b * streakMod;
+
+            } else {
+              const fiberX = microDetailLUT[((y & 511) << 9) | ((x * 7) & 511)];
+              const fiberY = microDetailLUT[(((y * 7) & 511) << 9) | (x & 511)];
+              const crossWeave = (fiberX * 0.55 + fiberY * 0.45) * (0.40 + hVal * 1.05);
+              r = col.r * crossWeave;
+              g = col.g * crossWeave;
+              b = col.b * crossWeave;
+            }
+
+          } else if (isPureDotMode) {
+            // =================================================================
+            // PURE 6176.mp4 DOT-BEAM MODE (Zero Stripes!)
+            // =================================================================
+            const col = sampleBilinear(src, meshW, meshH, nx, ny);
+            r = col.r; g = col.g; b = col.b;
+
+          } else {
+            // =================================================================
+            // 5. 3D FLUTED GLASS & 3D SATIN SILK ENGINES
+            // =================================================================
+            let stripCoord = uRot;
+            let secondPhase = -1;
+
+            if (geom === 'wave') {
+              stripCoord = uRot + Math.sin(vRot * 3.5 * Math.PI) * 0.055 + Math.cos(vRot * 1.8 * Math.PI) * 0.025;
+            } else if (geom === 'zigzag') {
+              const tri = Math.abs(((vRot * 2.5) % 1) * 2 - 1) - 0.5;
+              stripCoord = uRot + tri * 0.085;
+            } else if (geom === 'arch') {
+              const archBend = (vRot - 0.5) * (vRot - 0.5) * 4;
+              stripCoord = uRot + archBend * 0.075 * (uRot - 0.5) * 2.6;
+            } else if (geom === 'grid') {
+              const pos2 = vRot * strips * 0.72;
+              secondPhase = pos2 - Math.floor(pos2);
+            } else if (geom === 'ripple') {
+              const dx = nx - 0.5, dy = (ny - 0.5) / aspect;
+              stripCoord = Math.hypot(dx, dy) * 0.85;
+            } else if (geom === 'twist') {
+              const dx = nx - 0.5, dy = ny - 0.5;
+              const dist = Math.hypot(dx, dy);
+              const twistAng = dist * 4.2;
+              stripCoord = dx * Math.cos(twistAng) - dy * Math.sin(twistAng) + 0.5;
+            } else if (geom === 'reeded') {
+              stripCoord = uRot + Math.sin(uRot * Math.PI * 4) * 0.03;
+            }
+
+            const stripPos = stripCoord * strips;
+            const phase = stripPos - Math.floor(stripPos);
+
+            const blurAmt = spec.surfaceMode === 'satin' ? gloss : gloss * 0.22;
+            let ramp = computeRamp(phase, profile, blurAmt);
+            if (secondPhase >= 0) {
+              ramp = (ramp + computeRamp(secondPhase, profile, blurAmt)) * 0.65;
+            }
+
+            const normDispY = depth * 0.28;
+            const normDispX = depth * 0.038;
+            const baseSampleX = nx + ramp * normDispX * cosA - ramp * normDispY * sinA;
+            const baseSampleY = ny + ramp * normDispY * cosA + ramp * normDispX * sinA;
+
+            if (spec.surfaceMode === 'glass') {
+              const lensU = phase * 2 - 1;
+              const chroma = depth * 0.0032 * Math.abs(lensU);
+              const cR = sampleBilinear(src, meshW, meshH, baseSampleX + chroma, baseSampleY);
+              const cG = sampleBilinear(src, meshW, meshH, baseSampleX, baseSampleY);
+              const cB = sampleBilinear(src, meshW, meshH, baseSampleX - chroma, baseSampleY);
+              r = cR.r; g = cG.g; b = cB.b;
+
+              const primaryRim = Math.exp(-Math.pow(phase - 0.13, 2) / 0.0075) * 58 * gloss;
+              const secondaryRim = Math.exp(-Math.pow(phase - 0.86, 2) / 0.016) * 18 * gloss;
+              const grooveShadow = Math.pow(phase, 4) * 0.42 * depth;
+
+              r = r * (1 - grooveShadow) + primaryRim + secondaryRim;
+              g = g * (1 - grooveShadow) + primaryRim + secondaryRim;
+              b = b * (1 - grooveShadow) + primaryRim + secondaryRim;
+            } else {
+              const col = sampleBilinear(src, meshW, meshH, baseSampleX, baseSampleY);
+              r = col.r; g = col.g; b = col.b;
+
+              const ridgeSharp = geom === 'zigzag' ? 0.025 : 0.095;
+              const satinRidge = Math.exp(-Math.pow(phase - 0.36, 2) / ridgeSharp) * gloss;
+              const valleyShadow = Math.exp(-Math.pow(phase - 0.84, 2) / 0.09) * (0.50 * depth);
+
+              r = r * (1 - valleyShadow) + (r * 0.42 + c0.r * 0.52 + 24) * satinRidge * 0.65;
+              g = g * (1 - valleyShadow) + (g * 0.42 + c0.g * 0.52 + 16) * satinRidge * 0.65;
+              b = b * (1 - valleyShadow) + (b * 0.42 + c0.b * 0.52 + 20) * satinRidge * 0.65;
+            }
+          }
+
+          // Micro-Dot / LED Pattern Overlay (Only when enabled!)
+          if (hasDots) {
+            const gx = (x / cellPx) % 1;
+            const gy = (y / cellPx) % 1;
+            const dx = gx - 0.5;
+            const dy = gy - 0.5;
+
+            let dotMask;
+            if (isSquareLed) {
+              const maxD = Math.max(Math.abs(dx), Math.abs(dy));
+              dotMask = 1.0 - Math.max(0, Math.min(1, (maxD - 0.32) / 0.09));
+            } else {
+              const dist = Math.hypot(dx, dy);
+              dotMask = 1.0 - Math.max(0, Math.min(1, (dist - 0.33) / 0.09));
+            }
+
+            const patternVal = 0.20 + dotMask * 0.58;
+            const ovR = overlayChannel(Math.min(255, r), patternVal);
+            const ovG = overlayChannel(Math.min(255, g), patternVal);
+            const ovB = overlayChannel(Math.min(255, b), patternVal);
+
+            r = r * (1 - dotMix) + ovR * dotMix;
+            g = g * (1 - dotMix) + ovG * dotMix;
+            b = b * (1 - dotMix) + ovB * dotMix;
+          }
+
+          // Native High-Resolution Micro-Texture Studio Grain
+          const grainAmp = (spec.surfaceMode === 'vectricx' || spec.surfaceMode === 'stockViral') ? 9.5 : 5.5;
+          const grain = (microDetail - 0.5) * grainAmp;
+          const outIdx = (y * width + x) * 4;
+          dst[outIdx]     = Math.max(0, Math.min(255, r + grain));
+          dst[outIdx + 1] = Math.max(0, Math.min(255, g + grain));
+          dst[outIdx + 2] = Math.max(0, Math.min(255, b + grain));
+          dst[outIdx + 3] = 255;
+        }
+      }
+      targetCtx.putImageData(outImg, 0, 0);
+    }
+
+    const batchItems = [];
+
+    let renderPending = false;
+    function requestRender() {
+      if (renderPending) return;
+      renderPending = true;
+      requestAnimationFrame(() => {
+        renderPending = false;
+        const aspect = state.exportW / state.exportH;
+        const previewH = 480;
+        const previewW = Math.round(previewH * aspect);
+        renderSpecToCanvas(state, previewCanvas, previewW, previewH, state.showOriginal);
+
+        if (state.editingBatchIndex >= 0 && batchItems[state.editingBatchIndex]) {
+          const item = batchItems[state.editingBatchIndex];
+          item.presetKey = state.presetKey;
+          item.surfaceMode = state.surfaceMode;
+          item.gradMode = state.gradMode;
+          item.stripGeom = state.stripGeom;
+          item.profile = state.profile;
+          item.stripCount = state.stripCount;
+          item.glassDepth = state.glassDepth;
+          item.satinBlur = state.satinBlur;
+          item.dotSize = state.dotSize;
+          item.dotOpacity = state.dotOpacity;
+          item.dotShape = state.dotShape;
+          item.angle = state.angle;
+          item.darkMood = state.darkMood;
+          item.orbs = JSON.parse(JSON.stringify(state.orbs));
+          item.paintStrokes = JSON.parse(JSON.stringify(state.paintStrokes));
+          item.liquifyPushes = JSON.parse(JSON.stringify(state.liquifyPushes));
+          if (item.thumbCanvas) {
+            renderSpecToCanvas(item, item.thumbCanvas, 240, 160, false);
+          }
+        }
+      });
+    }
+
+    function syncSlidersUI() {
+      document.getElementById('dotSizeSlider').value = Math.round(state.dotSize * 100);
+      document.getElementById('dotSizeVal').textContent = `${Math.round(state.dotSize * 100)}%`;
+      document.getElementById('dotOpacitySlider').value = Math.round(state.dotOpacity * 100);
+      document.getElementById('dotOpacityVal').textContent = `${Math.round(state.dotOpacity * 100)}%`;
+      document.getElementById('stripCountSlider').value = state.stripCount;
+      document.getElementById('stripCountVal').textContent = state.stripCount;
+      document.getElementById('glassDepthSlider').value = Math.round(state.glassDepth * 100);
+      document.getElementById('glassDepthVal').textContent = `${Math.round(state.glassDepth * 100)}%`;
+      document.getElementById('satinBlurSlider').value = Math.round(state.satinBlur * 100);
+      document.getElementById('satinBlurVal').textContent = `${Math.round(state.satinBlur * 100)}%`;
+      document.getElementById('angleSlider').value = state.angle;
+      document.getElementById('angleVal').textContent = `${state.angle}°`;
+      document.getElementById('darkMoodSlider').value = Math.round(state.darkMood * 100);
+      document.getElementById('darkMoodVal').textContent = `${Math.round(state.darkMood * 100)}%`;
+
+      const activeGroup = state.surfaceMode;
+      document.querySelectorAll('#surfaceModeRow .engine-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.surface === activeGroup);
+      });
+      document.querySelectorAll('#gradModeRow .mini-pill').forEach(b => {
+        b.classList.toggle('active', b.dataset.gmode === state.gradMode);
+      });
+    }
+
+    // 5 Surface Category Pills
+    document.querySelectorAll('#surfaceModeRow .engine-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const surf = btn.dataset.surface;
+        const defaultPresetForSurface = {
+          vector3d: 'lowPoly3D',
+          stockViral: 'neonVertical',
+          cellular: 'cellGlow',
+          vectricx: 'topoLiquid',
+          glass: 'crimsonRib',
+          satin: 'satinFold',
+          dotSatin: 'dotBeam',
+          combo: 'satinDrape'
+        }[surf] || 'lowPoly3D';
+
+        const tile = document.querySelector(`#styleGrid .style-tile[data-preset="${defaultPresetForSurface}"]`);
+        if (tile) tile.click();
+      });
+    });
+
+    // 38 Pure One-Tap Style Presets
+    document.querySelectorAll('#styleGrid .style-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#styleGrid .style-tile').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const p = STYLE_PRESETS[btn.dataset.preset];
+        if (!p) return;
+        state.presetKey = btn.dataset.preset;
+        state.surfaceMode = p.surface;
+        state.gradMode = p.gmode;
+        state.stripGeom = p.geom;
+        state.profile = p.profile;
+        state.stripCount = p.count;
+        state.glassDepth = p.depth / 100;
+        state.satinBlur = p.blur / 100;
+        state.dotSize = p.dotSize / 100;
+        state.dotOpacity = p.dotOp / 100;
+        state.dotShape = p.dotShape;
+        state.angle = p.angle;
+        syncSlidersUI();
+        requestRender();
+      });
+    });
+
+    function bindSlider(id, valId, fmt, fn) {
+      const el = document.getElementById(id);
+      const valEl = document.getElementById(valId);
+      el.addEventListener('input', () => {
+        const v = parseFloat(el.value);
+        valEl.textContent = fmt(v);
+        fn(v);
+        requestRender();
+      });
+    }
+
+    bindSlider('dotSizeSlider', 'dotSizeVal', v => `${v}%`, v => {
+      state.dotSize = v / 100;
+      if (v > 0 && state.surfaceMode !== 'dotSatin' && state.surfaceMode !== 'combo') {
+        state.surfaceMode = 'combo';
+        if (state.dotOpacity < 0.1) state.dotOpacity = 0.55;
+        syncSlidersUI();
+      }
+    });
+    bindSlider('dotOpacitySlider', 'dotOpacityVal', v => `${v}%`, v => state.dotOpacity = v / 100);
+    bindSlider('stripCountSlider', 'stripCountVal', v => `${v}`, v => state.stripCount = v);
+    bindSlider('glassDepthSlider', 'glassDepthVal', v => `${v}%`, v => state.glassDepth = v / 100);
+    bindSlider('satinBlurSlider', 'satinBlurVal', v => `${v}%`, v => state.satinBlur = v / 100);
+    bindSlider('angleSlider', 'angleVal', v => `${v}°`, v => state.angle = v);
+    bindSlider('darkMoodSlider', 'darkMoodVal', v => `${v}%`, v => state.darkMood = v / 100);
+
+    document.querySelectorAll('.os-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.os-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.os-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        if (btn.dataset.tab === 'panel-batch' && batchItems.length === 0) {
+          runBatchGeneration(50);
+        }
+      });
+    });
+
+    // =========================================================================
+    // BATCH 50 / 100 NON-REPEATING GENERATOR & FULL 4500x3000 MASTER ZIP EXPORT
+    // =========================================================================
+    const batchGridContainer = document.getElementById('batchGridContainer');
+    const batchStatusText = document.getElementById('batchStatusText');
+    const batchProgressBar = document.getElementById('batchProgressBar');
+    const batchProgressFill = document.getElementById('batchProgressFill');
+
+    function customizeBatchItem(index) {
+      const item = batchItems[index];
+      if (!item) return;
+      state.editingBatchIndex = index;
+      state.presetKey = item.presetKey;
+      state.surfaceMode = item.surfaceMode;
+      state.gradMode = item.gradMode;
+      state.stripGeom = item.stripGeom;
+      state.profile = item.profile;
+      state.stripCount = item.stripCount;
+      state.glassDepth = item.glassDepth;
+      state.satinBlur = item.satinBlur;
+      state.dotSize = item.dotSize;
+      state.dotOpacity = item.dotOpacity;
+      state.dotShape = item.dotShape;
+      state.angle = item.angle;
+      state.darkMood = item.darkMood;
+      state.seedOffset = item.seedOffset;
+      state.morphVariant = item.morphVariant || 0;
+      state.orbs = JSON.parse(JSON.stringify(item.orbs));
+      state.paintStrokes = JSON.parse(JSON.stringify(item.paintStrokes || []));
+      state.liquifyPushes = JSON.parse(JSON.stringify(item.liquifyPushes || []));
+
+      document.querySelectorAll('.batch-item-card').forEach((c, idx) => {
+        c.classList.toggle('editing', idx === index);
+      });
+      document.querySelectorAll('#styleGrid .style-tile').forEach(b => {
+        b.classList.toggle('active', b.dataset.preset === state.presetKey);
+      });
+
+      document.getElementById('hintLabel').textContent = `Customizing Batch #${index + 1} (Auto-Syncs to Grid)`;
+      renderColorCircles();
+      syncSlidersUI();
+      requestRender();
+
+      document.querySelector('[data-tab="panel-style"]').click();
+    }
+
+    function runBatchGeneration(count) {
+      batchGridContainer.innerHTML = '';
+      batchItems.length = 0;
+      state.editingBatchIndex = -1;
+      batchProgressBar.style.display = 'block';
+      batchProgressFill.style.width = '0%';
+
+      // Always force a fresh shuffled deck rotation on every Bulk click so zero styles repeat!
+      refillAndShuffleDeck();
+
+      let idx = 0;
+      function nextBatchChunk() {
+        const end = Math.min(count, idx + 4);
+        for (; idx < end; idx++) {
+          const itemIdx = idx;
+          const spec = generateUniqueSpec(itemIdx);
+          batchItems.push(spec);
+
+          const card = document.createElement('div');
+          card.className = 'batch-item-card';
+
+          const thumbWrap = document.createElement('div');
+          thumbWrap.className = 'batch-thumb-wrap';
+          thumbWrap.title = 'Tap to load & customize this design';
+
+          const thumbCanvas = document.createElement('canvas');
+          renderSpecToCanvas(spec, thumbCanvas, 240, 160, false);
+          spec.thumbCanvas = thumbCanvas;
+
+          const idTag = document.createElement('span');
+          idTag.className = 'batch-id-tag';
+          idTag.textContent = `#${itemIdx + 1}`;
+
+          const styleTag = document.createElement('span');
+          styleTag.className = 'batch-style-tag';
+          const baseLabel = STYLE_PRESETS[spec.presetKey] ? STYLE_PRESETS[spec.presetKey].label : spec.presetKey;
+          styleTag.textContent = `${baseLabel} · V${(spec.morphVariant || 0) + 1}`;
+
+          thumbWrap.appendChild(thumbCanvas);
+          thumbWrap.appendChild(idTag);
+          thumbWrap.appendChild(styleTag);
+          thumbWrap.addEventListener('click', () => customizeBatchItem(itemIdx));
+
+          const actions = document.createElement('div');
+          actions.className = 'batch-card-actions';
+
+          const editBtn = document.createElement('button');
+          editBtn.className = 'batch-card-btn';
+          editBtn.innerHTML = `<svg class="icon" viewBox="0 0 24 24" style="width:10px;height:10px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Edit</span>`;
+          editBtn.addEventListener('click', () => customizeBatchItem(itemIdx));
+
+          const dlBtn = document.createElement('button');
+          dlBtn.className = 'batch-card-btn';
+          dlBtn.innerHTML = `<svg class="icon" viewBox="0 0 24 24" style="width:10px;height:10px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Save</span>`;
+          dlBtn.addEventListener('click', () => saveSpecHighRes(spec, `batch_${itemIdx + 1}`, 'jpg'));
+
+          actions.appendChild(editBtn);
+          actions.appendChild(dlBtn);
+          card.appendChild(thumbWrap);
+          card.appendChild(actions);
+          batchGridContainer.appendChild(card);
+        }
+
+        batchProgressFill.style.width = `${Math.round((idx / count) * 100)}%`;
+        batchStatusText.textContent = `Generated ${idx} / ${count} Brand-New Unique Designs...`;
+
+        if (idx < count) {
+          requestAnimationFrame(nextBatchChunk);
+        } else {
+          saveVault();
+          batchStatusText.textContent = `${count} Brand-New Unique Ready (Run #${batchRunCounter}) — Export All (.ZIP) @ ${state.exportW}×${state.exportH}!`;
+          setTimeout(() => { batchProgressBar.style.display = 'none'; }, 400);
+        }
+      }
+
+      requestAnimationFrame(nextBatchChunk);
+    }
+
+    document.getElementById('gen50Btn').addEventListener('click', () => runBatchGeneration(50));
+    document.getElementById('gen100Btn').addEventListener('click', () => runBatchGeneration(100));
+
+    // Standalone Pure-JS ZIP Builder for 1-Click Full-Resolution Bulk Export
+    const crcTable = (() => {
+      const t = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+        t[n] = c;
+      }
+      return t;
+    })();
+
+    function crc32(u8) {
+      let crc = 0 ^ (-1);
+      for (let i = 0; i < u8.length; i++) {
+        crc = (crc >>> 8) ^ crcTable[(crc ^ u8[i]) & 0xff];
+      }
+      return (crc ^ (-1)) >>> 0;
+    }
+
+    function buildZipBlob(files) {
+      const localParts = [];
+      const centralParts = [];
+      let offset = 0;
+      const enc = new TextEncoder();
+
+      files.forEach(f => {
+        const nameBytes = enc.encode(f.name);
+        const data = f.data;
+        const crc = crc32(data);
+
+        const localHeader = new Uint8Array(30 + nameBytes.length);
+        const lv = new DataView(localHeader.buffer);
+        lv.setUint32(0, 0x04034b50, true);
+        lv.setUint16(4, 20, true);
+        lv.setUint16(6, 0, true);
+        lv.setUint16(8, 0, true);
+        lv.setUint16(10, 0, true);
+        lv.setUint16(12, 0, true);
+        lv.setUint32(14, crc, true);
+        lv.setUint32(18, data.length, true);
+        lv.setUint32(22, data.length, true);
+        lv.setUint16(26, nameBytes.length, true);
+        lv.setUint16(28, 0, true);
+        localHeader.set(nameBytes, 30);
+
+        const centralHeader = new Uint8Array(46 + nameBytes.length);
+        const cv = new DataView(centralHeader.buffer);
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, 20, true);
+        cv.setUint16(6, 20, true);
+        cv.setUint16(8, 0, true);
+        cv.setUint16(10, 0, true);
+        cv.setUint16(12, 0, true);
+        cv.setUint16(14, 0, true);
+        cv.setUint32(16, crc, true);
+        cv.setUint32(20, data.length, true);
+        cv.setUint32(24, data.length, true);
+        cv.setUint16(28, nameBytes.length, true);
+        cv.setUint16(30, 0, true);
+        cv.setUint16(32, 0, true);
+        cv.setUint16(34, 0, true);
+        cv.setUint16(36, 0, true);
+        cv.setUint32(38, 0, true);
+        cv.setUint32(42, offset, true);
+        centralHeader.set(nameBytes, 46);
+
+        localParts.push(localHeader, data);
+        centralParts.push(centralHeader);
+        offset += localHeader.length + data.length;
+      });
+
+      const centralSize = centralParts.reduce((s, p) => s + p.length, 0);
+      const eocd = new Uint8Array(22);
+      const ev = new DataView(eocd.buffer);
+      ev.setUint32(0, 0x06054b50, true);
+      ev.setUint16(4, 0, true);
+      ev.setUint16(6, 0, true);
+      ev.setUint16(8, files.length, true);
+      ev.setUint16(10, files.length, true);
+      ev.setUint32(12, centralSize, true);
+      ev.setUint32(16, offset, true);
+      ev.setUint16(20, 0, true);
+
+      return new Blob([...localParts, ...centralParts, eocd], { type: 'application/zip' });
+    }
+
+    document.getElementById('exportAllZipBtn').addEventListener('click', () => {
+      if (batchItems.length === 0) {
+        runBatchGeneration(50);
+        return;
+      }
+      const total = batchItems.length;
+      const zipFiles = [];
+      const hiCanvas = document.createElement('canvas');
+      const masterW = state.exportW;
+      const masterH = state.exportH;
+
+      batchProgressBar.style.display = 'block';
+      batchProgressFill.style.width = '0%';
+
+      let cur = 0;
+      function stepZipRender() {
+        if (cur >= total) {
+          batchStatusText.textContent = `Packing ${total} Master ${masterW}×${masterH} files into ZIP...`;
+          setTimeout(() => {
+            const zipBlob = buildZipBlob(zipFiles);
+            const url = URL.createObjectURL(zipBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Texture_Master_Batch_Run${batchRunCounter}_${total}_${masterW}x${masterH}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            batchStatusText.textContent = `Exported ${total} Master ${masterW}×${masterH} JPGs (.ZIP)!`;
+            batchProgressBar.style.display = 'none';
+          }, 40);
+          return;
+        }
+
+        const spec = batchItems[cur];
+        renderSpecToCanvas(spec, hiCanvas, masterW, masterH, false);
+        hiCanvas.toBlob(async (blob) => {
+          const buf = await blob.arrayBuffer();
+          zipFiles.push({
+            name: `Texture_${spec.presetKey}_V${(spec.morphVariant || 0) + 1}_${String(cur + 1).padStart(3, '0')}_${masterW}x${masterH}.jpg`,
+            data: new Uint8Array(buf)
+          });
+          cur++;
+          batchProgressFill.style.width = `${Math.round((cur / total) * 100)}%`;
+          batchStatusText.textContent = `Rendering ${masterW}×${masterH} Master ${cur} / ${total}...`;
+          setTimeout(stepZipRender, 15);
+        }, 'image/jpeg', 1.0);
+      }
+
+      stepZipRender();
+    });
+
+    // Gradient Mode Pills
+    document.querySelectorAll('#gradModeRow .mini-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#gradModeRow .mini-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.gradMode = btn.dataset.gmode;
+        requestRender();
+      });
+    });
+
+    // Touch Mode Pills
+    const hintLabel = document.getElementById('hintLabel');
+    document.querySelectorAll('#touchModeRow .mini-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#touchModeRow .mini-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.touchMode = btn.dataset.touch;
+        if (state.touchMode === 'move') hintLabel.textContent = 'Touch & drag on image to move light & shapes';
+        else if (state.touchMode === 'brush') hintLabel.textContent = 'Tap on image to paint glowing color spots';
+        else hintLabel.textContent = 'Swipe on image to swirl and Liquify colors';
+      });
+    });
+
+    document.getElementById('resetTouchBtn').addEventListener('click', () => {
+      state.paintStrokes = [];
+      state.liquifyPushes = [];
+      requestRender();
+    });
+
+    // Photo Upload to Mesh
+    document.getElementById('photoInput').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const sc = document.createElement('canvas');
+          sc.width = 50; sc.height = 50;
+          const sCtx = sc.getContext('2d');
+          sCtx.drawImage(img, 0, 0, 50, 50);
+          const px = sCtx.getImageData(0, 0, 50, 50).data;
+          const pts = [{x:0.56,y:0.28},{x:0.48,y:0.48},{x:0.34,y:0.62},{x:0.20,y:0.78}];
+          state.orbs = pts.map(p => {
+            const idx = (Math.floor(p.y * 49) * 50 + Math.floor(p.x * 49)) * 4;
+            return {
+              x: p.x, y: p.y,
+              color: rgbToHex(Math.min(255, px[idx]*1.25+15), Math.min(255, px[idx+1]*1.25+15), Math.min(255, px[idx+2]*1.25+15)),
+              radius: 0.60
+            };
+          });
+          renderColorCircles();
+          requestRender();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Touch / Mouse Canvas Interaction
+    let isDown = false, activeOrb = -1, lastPt = { x: 0, y: 0 };
+    function getNormPt(e) {
+      const r = previewCanvas.getBoundingClientRect();
+      const cx = e.touches ? e.touches[0].clientX : e.clientX;
+      const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: Math.max(0, Math.min(1, (cx - r.left) / r.width)),
+        y: Math.max(0, Math.min(1, (cy - r.top) / r.height))
+      };
+    }
+
+    function onStart(e) {
+      isDown = true;
+      const pt = getNormPt(e);
+      lastPt = pt;
+      if (state.touchMode === 'move') {
+        let best = 99;
+        state.orbs.forEach((o, i) => {
+          const d = Math.hypot(o.x - pt.x, o.y - pt.y);
+          if (d < best) { best = d; activeOrb = i; }
+        });
+        if (activeOrb >= 0) {
+          state.orbs[activeOrb].x = pt.x;
+          state.orbs[activeOrb].y = pt.y;
+          requestRender();
+        }
+      } else if (state.touchMode === 'brush') {
+        const randColor = state.orbs[Math.floor(Math.random() * state.orbs.length)].color;
+        state.paintStrokes.push({ x: pt.x, y: pt.y, color: randColor });
+        if (state.paintStrokes.length > 20) state.paintStrokes.shift();
+        requestRender();
+      }
+    }
+
+    function onMove(e) {
+      if (!isDown) return;
+      if (e.cancelable) e.preventDefault();
+      const pt = getNormPt(e);
+      if (state.touchMode === 'move' && activeOrb >= 0) {
+        state.orbs[activeOrb].x = pt.x;
+        state.orbs[activeOrb].y = pt.y;
+        requestRender();
+      } else if (state.touchMode === 'liquify') {
+        const vx = (pt.x - lastPt.x) * 1.4, vy = (pt.y - lastPt.y) * 1.4;
+        if (Math.hypot(vx, vy) > 0.005) {
+          state.liquifyPushes.push({ x: pt.x, y: pt.y, vx, vy, rSq: 0.06 });
+          if (state.liquifyPushes.length > 25) state.liquifyPushes.shift();
+          lastPt = pt;
+          requestRender();
+        }
+      }
+    }
+
+    function onEnd() { isDown = false; activeOrb = -1; }
+
+    previewCanvas.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+    previewCanvas.addEventListener('touchstart', onStart, { passive: false });
+    previewCanvas.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onEnd);
+
+    // Compare Original Base Mesh
+    const cmpBtn = document.getElementById('compareBtn');
+    const showOrig = () => { state.showOriginal = true; requestRender(); };
+    const hideOrig = () => { state.showOriginal = false; requestRender(); };
+    cmpBtn.addEventListener('mousedown', showOrig);
+    cmpBtn.addEventListener('mouseup', hideOrig);
+    cmpBtn.addEventListener('mouseleave', hideOrig);
+    cmpBtn.addEventListener('touchstart', (e) => { e.preventDefault(); showOrig(); });
+    cmpBtn.addEventListener('touchend', hideOrig);
+
+    // Auto Magic Button (Pulls next non-repeating style from shuffled deck)
+    document.getElementById('autoMagicBtn').addEventListener('click', () => {
+      const uSpec = generateUniqueSpec();
+      saveVault();
+      state.editingBatchIndex = -1;
+      state.presetKey = uSpec.presetKey;
+      state.surfaceMode = uSpec.surfaceMode;
+      state.gradMode = uSpec.gradMode;
+      state.stripGeom = uSpec.stripGeom;
+      state.profile = uSpec.profile;
+      state.stripCount = uSpec.stripCount;
+      state.glassDepth = uSpec.glassDepth;
+      state.satinBlur = uSpec.satinBlur;
+      state.dotSize = uSpec.dotSize;
+      state.dotOpacity = uSpec.dotOpacity;
+      state.dotShape = uSpec.dotShape;
+      state.angle = uSpec.angle;
+      state.darkMood = uSpec.darkMood;
+      state.seedOffset = uSpec.seedOffset;
+      state.morphVariant = uSpec.morphVariant || 0;
+      state.orbs = uSpec.orbs;
+      state.paintStrokes = [];
+      state.liquifyPushes = [];
+
+      document.querySelectorAll('#styleGrid .style-tile').forEach(b => {
+        b.classList.toggle('active', b.dataset.preset === state.presetKey);
+      });
+      renderColorCircles();
+      syncSlidersUI();
+      requestRender();
+    });
+
+    // Resolution Size Selector
+    document.querySelectorAll('#sizeRow .mini-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#sizeRow .mini-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.exportW = parseInt(btn.dataset.w, 10);
+        state.exportH = parseInt(btn.dataset.h, 10);
+        state.ratioLabel = btn.dataset.ratio;
+        document.getElementById('sizeBadge').textContent = `${state.ratioLabel} · ${state.exportW}×${state.exportH}`;
+        requestRender();
+      });
+    });
+
+    // Single Export at 100% Master Quality (1.0)
+    function saveSpecHighRes(spec, tag, fmt) {
+      const status = document.getElementById('saveStatus');
+      if (status) status.textContent = `Rendering ${state.exportW}×${state.exportH}px Master Quality...`;
+      setTimeout(() => {
+        const hi = document.createElement('canvas');
+        renderSpecToCanvas(spec, hi, state.exportW, state.exportH, false);
+        hi.toBlob((blob) => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Texture_${tag}_${state.exportW}x${state.exportH}.${fmt}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          if (status) status.textContent = `Saved Texture_${tag}_${state.exportW}x${state.exportH}.${fmt} (100% Quality)`;
+        }, fmt === 'jpg' ? 'image/jpeg' : 'image/png', 1.0);
+      }, 40);
+    }
+
+    document.getElementById('dlPngBtn').addEventListener('click', () => saveSpecHighRes(state, state.presetKey, 'png'));
+    document.getElementById('dlJpgBtn').addEventListener('click', () => saveSpecHighRes(state, state.presetKey, 'jpg'));
+    document.getElementById('quickSaveBtn').addEventListener('click', () => saveSpecHighRes(state, state.presetKey, 'png'));
+
+    loadVault();
+    renderThemeBubbles();
+    renderColorCircles();
+    syncSlidersUI();
+    requestRender();
+  </script>
+</body>
+</html>
