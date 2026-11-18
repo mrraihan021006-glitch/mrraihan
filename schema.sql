@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS portfolio_state (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  state_json TEXT NOT NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

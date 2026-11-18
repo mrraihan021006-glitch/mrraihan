@@ -1,0 +1,18 @@
+name = "mrraihan"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "raihan_portfolio_db"
+database_id = "212050f4-a269-4c14-a6d2-9b3f21431902"
+
+[vars]
+CLOUDINARY_CLOUD_NAME = "dbkmg0oia"
+CLOUDINARY_FOLDER = "raihan_portfolio"
+ADMIN_EMAIL = "mohammadraihan4386.bd@gmail.com"
