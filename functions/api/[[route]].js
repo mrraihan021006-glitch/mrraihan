@@ -25,7 +25,6 @@ export async function onRequest(context) {
           return new Response(JSON.stringify({ error: "D1 binding DB not found" }), { status: 500, headers: corsHeaders });
         }
 
-        // Ensure both portfolio_state and media_assets tables exist in raihan_portfolio_db
         await env.DB.prepare(
           "CREATE TABLE IF NOT EXISTS portfolio_state (id INTEGER PRIMARY KEY CHECK (id = 1), state_json TEXT NOT NULL, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP)"
         ).run();
@@ -33,7 +32,6 @@ export async function onRequest(context) {
           "CREATE TABLE IF NOT EXISTS media_assets (id TEXT PRIMARY KEY, filename TEXT, data_url TEXT NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"
         ).run();
 
-        // 1. GET /api/state -> Return live global state
         if (path === "/api/state" && request.method === "GET") {
           const row = await env.DB.prepare("SELECT state_json FROM portfolio_state WHERE id = 1").first();
           if (!row || !row.state_json) {
@@ -42,7 +40,6 @@ export async function onRequest(context) {
           return new Response(row.state_json, { headers: corsHeaders });
         }
 
-        // 2. POST /api/state -> Save global state to D1
         if (path === "/api/state" && request.method === "POST") {
           const bodyText = await request.text();
           await env.DB.prepare(
@@ -53,7 +50,6 @@ export async function onRequest(context) {
           return new Response(JSON.stringify({ ok: true, database: "raihan_portfolio_db" }), { headers: corsHeaders });
         }
 
-        // 3. POST /api/media -> Store uploaded personal/gallery photo in D1 media_assets table & return /api/media/<id> URL
         if (path === "/api/media" && request.method === "POST") {
           const body = await request.json();
           const id = "m_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
@@ -63,7 +59,6 @@ export async function onRequest(context) {
           return new Response(JSON.stringify({ ok: true, id: id, url: "/api/media/" + id }), { headers: corsHeaders });
         }
 
-        // 4. GET /api/media/<id> -> Serve uploaded image directly from D1 globally
         if (path.startsWith("/api/media/") && request.method === "GET") {
           const id = path.replace("/api/media/", "");
           const row = await env.DB.prepare("SELECT data_url FROM media_assets WHERE id = ?").bind(id).first();
