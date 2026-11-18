@@ -3,3 +3,10 @@ CREATE TABLE IF NOT EXISTS portfolio_state (
   state_json TEXT NOT NULL,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS media_assets (
+  id TEXT PRIMARY KEY,
+  filename TEXT,
+  data_url TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
