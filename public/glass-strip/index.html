@@ -1161,7 +1161,7 @@
       <div class="brand-mark">MR</div>
       <div class="brand-titles">
         <span class="brand-name">MR Background Studio</span>
-        <span class="dna-status-tag">58 procedural engines · sRGB 300 DPI</span>
+        <span class="dna-status-tag">69 procedural engines · sRGB 300 DPI</span>
       </div>
     </div>
 
@@ -1251,7 +1251,7 @@
         </button>
       </nav>
 
-      <!-- PANEL 1: 10 CATEGORIES + 58 STUDIO PRESETS + CONTEXT-AWARE SLIDERS + 4-STOP COLOR SPECIMEN -->
+      <!-- PANEL 1: 10 CATEGORIES + 69 STUDIO PRESETS + CONTEXT-AWARE SLIDERS + 4-STOP COLOR SPECIMEN -->
       <div class="os-panel active" id="panel-style">
         <div class="os-card">
           <div class="engine-pills" id="surfaceModeRow">
@@ -1287,7 +1287,7 @@
             </button>
           </div>
 
-          <!-- 58 Instant-Response Studio Presets -->
+          <!-- 69 Instant-Response Studio Presets -->
           <div class="style-grid" id="styleGrid">
             <!-- 1. Glass Strip & Reeded Glass Collection (Default on Load) -->
             <button class="style-tile active" data-preset="wave" data-cat="glass">
@@ -1548,6 +1548,39 @@
               <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
               <span>LED Matrix</span>
             </button>
+            <!-- 9. New - Best Sellers 2026 (21 Nov 2026) -->
+            <button class="style-tile" data-preset="sunsetAurora" data-cat="satin">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M2 12c3-6 6 6 9 0s6 6 11 0"/></svg>
+              <span>Sunset Aurora</span>
+            </button>
+            <button class="style-tile" data-preset="oceanDepthMesh" data-cat="waveVector">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M2 10c6-7 10 7 20 0"/><path d="M2 14c6 7 10-7 20 0"/></svg>
+              <span>Ocean Depth Mesh</span>
+            </button>
+            <button class="style-tile" data-preset="roseQuartzMarble" data-cat="stockViral">
+              <svg class="icon" viewBox="0 0 24 24"><path d="m3 6 5 4-2 5 6 4"/><path d="m13 4-2 6 5 3 4 6"/><path d="m8 10 9 3"/></svg>
+              <span>Rose Quartz Marble</span>
+            </button>
+            <button class="style-tile" data-preset="midnightTopo" data-cat="vectricx">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 7c3-4 6 4 9 0s6 4 9 0"/><path d="M3 12c3-4 6 4 9 0s6 4 9 0"/><path d="M3 17c3-4 6 4 9 0s6 4 9 0"/></svg>
+              <span>Midnight Topo</span>
+            </button>
+            <button class="style-tile" data-preset="terracottaPaperCut" data-cat="waveVector">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M2 7c5-4 9 4 14 0s4-2 6 0"/><path d="M2 12c5-4 9 4 14 0s4-2 6 0"/><path d="M2 17c5-4 9 4 14 0s4-2 6 0"/></svg>
+              <span>Terracotta Paper</span>
+            </button>
+            <button class="style-tile" data-preset="charcoalGrunge" data-cat="stockViral">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 8h16M5 12h16M3 16h14"/><path d="m14 5 5 14"/></svg>
+              <span>Charcoal Grunge</span>
+            </button>
+            <button class="style-tile" data-preset="champagneSatin" data-cat="satin">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 16c4-8 8 8 12 0s4-8 6-4"/><path d="M3 9c4-8 8 8 12 0s4-8 6-4"/></svg>
+              <span>Champagne Satin</span>
+            </button>
+            <button class="style-tile" data-preset="prismDawn" data-cat="lightFx">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="6 4 9 6 7 9 4 7"/><polygon points="16 5 19 8 15 10"/><polygon points="11 13 14 15 12 18 9 16"/><polygon points="18 16 21 18 19 21"/></svg>
+              <span>Prism Dawn</span>
+            </button>
           </div>
         </div>
 
@@ -1592,6 +1625,14 @@
           </div>
 
           <!-- 4-Stop Color Specimen Bar -->
+          <div class="os-card-header" style="margin-top:10px;">
+            <span class="os-card-title">Colors</span>
+            <button class="os-pill-btn" id="randomColorsBtn" style="height:28px;padding:0 10px;font-size:12px;" title="Random colors — same preset, same settings (Shortcut: C)">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+              <span>Random Colors</span>
+              <kbd class="keycap">C</kbd>
+            </button>
+          </div>
           <div class="deep-mid-bright-row" id="dmbColorRow"></div>
         </div>
       </div>
@@ -1650,6 +1691,11 @@
         <div class="os-card">
           <div class="os-card-header">
             <span class="os-card-title">Color palettes</span>
+            <button class="os-pill-btn" id="randomColorsBtnPalettes" style="height:28px;padding:0 10px;font-size:12px;" title="Random colors — same preset, same settings (Shortcut: C)">
+              <svg class="icon" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+              <span>Random Colors</span>
+              <kbd class="keycap">C</kbd>
+            </button>
           </div>
 
           <div class="palette-bubbles" id="paletteGrid"></div>
@@ -1686,9 +1732,13 @@
               <span class="vault-badge" id="vaultCountBadge">0 seeds logged</span>
             </div>
 
-            <button class="os-pill-btn primary" id="exportAllZipBtn">
+            <button class="os-pill-btn" id="exportAllZipBtn">
               <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span>Export ZIP</span>
+            </button>
+            <button class="os-pill-btn primary" id="exportAllOneByOneBtn">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download one by one</span>
             </button>
           </div>
 
@@ -1766,7 +1816,7 @@
 
   <script>
     // =========================================================================
-    // MR BACKGROUND STUDIO — UNSLOPPED 58-ENGINE PROCEDURAL & VECTOR WORKSTATION
+    // MR BACKGROUND STUDIO — UNSLOPPED 69-ENGINE PROCEDURAL & VECTOR WORKSTATION
     // Unslop system adapted from Damir Sokolovsky (@heydamir), CC BY 4.0
     // =========================================================================
 
@@ -1898,7 +1948,17 @@
       velvetPlisse:        { label: 'Plisse Fold',     surface: 'satin',      gmode: 'beam',    geom: 'zigzag',              profile: 'prism',    count: 20, depth: 84, blur: 78, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 28,  labels: ['Pleat count', 'Pleat shadow', 'Velvet ridge', 'Pleat angle'] },
       liquidAurora:        { label: 'Aurora Flow',     surface: 'satin',      gmode: 'aurora',  geom: 'wave',                profile: 'sine',     count: 7,  depth: 78, blur: 90, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 20,  labels: ['Aurora curtains', 'Wave depth', 'Silk diffusion', 'Aurora angle'] },
       dotBeam:             { label: 'Dot Beam',        surface: 'dotSatin',   gmode: 'beam',    geom: 'none',                profile: 'sine',     count: 6,  depth: 86, blur: 88, dotSize: 22, dotOp: 62, dotShape: 'circle', angle: 39,  labels: ['Beam folds', 'Beam intensity', 'Beam softness', 'Beam angle'] },
-      pixelLed:            { label: 'LED Matrix',      surface: 'dotSatin',   gmode: 'beam',    geom: 'none',                profile: 'sine',     count: 6,  depth: 86, blur: 88, dotSize: 26, dotOp: 66, dotShape: 'square', angle: 39,  labels: ['Matrix folds', 'Core brightness', 'Glow spread', 'Matrix angle'] }
+      pixelLed:            { label: 'LED Matrix',      surface: 'dotSatin',   gmode: 'beam',    geom: 'none',                profile: 'sine',     count: 6,  depth: 86, blur: 88, dotSize: 26, dotOp: 66, dotShape: 'square', angle: 39,  labels: ['Matrix folds', 'Core brightness', 'Glow spread', 'Matrix angle'] },
+
+      // 9. New - Best Sellers 2026 (21 Nov 2026: Part 1A of the presets spec; theme = fixed palette)
+      sunsetAurora:        { label: 'Sunset Aurora',     surface: 'satin',      gmode: 'aurora',  geom: 'wave',                profile: 'sine',     count: 7,  depth: 78, blur: 90, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 20,  theme: 24, labels: ['Aurora curtains', 'Wave depth', 'Silk diffusion', 'Aurora angle'] },
+      oceanDepthMesh:      { label: 'Ocean Depth Mesh',  surface: 'waveVector', gmode: 'mesh',    geom: 'silkRibbonMesh',      profile: 'sine',     count: 20, depth: 85, blur: 84, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: -8,  theme: 25, labels: ['Mesh harmonics', 'Wave amplitude', 'Luminous fold', 'Mesh angle'] },
+      roseQuartzMarble:    { label: 'Rose Quartz Marble',surface: 'stockViral', gmode: 'mesh',    geom: 'luxuryMarble',        profile: 'sine',     count: 20, depth: 88, blur: 82, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 22,  theme: 26, labels: ['Vein frequency', 'Mineral contrast', 'Seam glow', 'Vein flow'] },
+      midnightTopo:        { label: 'Midnight Topo',     surface: 'vectricx',   gmode: 'mesh',    geom: 'topoLiquid',          profile: 'sine',     count: 24, depth: 86, blur: 80, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 18,  theme: 27, labels: ['Contour lines', 'Liquid warp', 'Chrome highlight', 'Flow angle'] },
+      terracottaPaperCut:  { label: 'Terracotta Paper',  surface: 'waveVector', gmode: 'mesh',    geom: 'paperWaveCut',        profile: 'cylinder', count: 14, depth: 86, blur: 78, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: -12, theme: 28, labels: ['Wave layers', 'Cut shadow', 'Edge bevel', 'Wave tilt'] },
+      charcoalGrunge:      { label: 'Charcoal Grunge',   surface: 'stockViral', gmode: 'mesh',    geom: 'grungeBrush',         profile: 'sawtooth', count: 28, depth: 86, blur: 76, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: -18, theme: 29, labels: ['Brush strokes', 'Bristle tooth', 'Canvas contrast', 'Stroke angle'] },
+      champagneSatin:      { label: 'Champagne Satin',   surface: 'satin',      gmode: 'aurora',  geom: 'wave',                profile: 'sine',     count: 10, depth: 82, blur: 84, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 32,  theme: 30, labels: ['Silk waves', 'Fold shadow', 'Velvet gloss', 'Drape angle'] },
+      prismDawn:           { label: 'Prism Dawn',        surface: 'lightFx',    gmode: 'mesh',    geom: 'prismShards',         profile: 'prism',    count: 38, depth: 85, blur: 84, dotSize: 0,  dotOp: 0,  dotShape: 'circle', angle: 18,  theme: 31, labels: ['Shard density', 'Shard size', 'Crystal glow', 'Drift angle'] }
     };
 
     const THEMES = [
@@ -1925,7 +1985,15 @@
       { name: 'Copper Bronze',   colors: ['#fcd34d', '#d97706', '#78350f', '#1c0a03'] },
       { name: 'Lavender Mist',   colors: ['#f5d0fe', '#c084fc', '#6366f1', '#1a103c'] },
       { name: 'Ruby Obsidian',   colors: ['#fca5a5', '#ef4444', '#7f1d1d', '#180404'] },
-      { name: 'Bauhaus Primary', colors: ['#facc15', '#ef4444', '#2563eb', '#0f172a'] }
+      { name: 'Bauhaus Primary', colors: ['#facc15', '#ef4444', '#2563eb', '#0f172a'] },
+      { name: 'Sunset Aurora',   colors: ['#FFD9A0', '#FF7A59', '#C94B7C', '#2B1B4A'] },
+      { name: 'Ocean Depth Mesh',colors: ['#7FE7DC', '#2AA5B8', '#155E75', '#062A3A'] },
+      { name: 'Rose Quartz Marble', colors: ['#FDE8E8', '#F2B8C6', '#D98A9E', '#6E3B4A'] },
+      { name: 'Midnight Topo',     colors: ['#8EF5D2', '#2DD4BF', '#1E40AF', '#050816'] },
+      { name: 'Terracotta Paper',colors: ['#FFF3E0', '#F2A65A', '#C96F2E', '#4A2410'] },
+      { name: 'Charcoal Grunge',  colors: ['#E8E4DA', '#B8A88A', '#E56B38', '#17171A'] },
+      { name: 'Champagne Satin', colors: ['#FFF8E7', '#F5D9A8', '#C9A227', '#3D2C12'] },
+      { name: 'Prism Dawn',      colors: ['#FDE68A', '#F9A8D4', '#A5B4FC', '#1E1B4B'] }
     ];
 
     function hash2(x, y, seed) {
@@ -2402,6 +2470,98 @@
         dmbColorRow.appendChild(slot);
       });
     }
+
+    // === RANDOM COLORS (BEGIN) — 21 Nov 2026. Re-picks ONLY the 4 orb colors.
+    // Preset, geometry, sliders, tone, resolution and format are untouched.
+    // Works in manual mode and in batch edit: customizeBatchItem() loads the
+    // specimen into `state`, and requestRender() writes `state` back into
+    // that one specimen only, so no other batch item is affected. ===
+    function colorDnaFor(colors) {
+      return `${state.presetKey}|m${state.morphVariant || 0}|s${state.seedOffset}|a${state.angle}|c${colors.map(c => c.replace('#', '').toLowerCase()).join('-')}`;
+    }
+
+    function pickUnusedThemeIndex(prevColors) {
+      // Random designer palette whose color-DNA is not already in the vault
+      // for this exact preset/seed/angle, and whose colors differ from the
+      // current ones. Returns -1 when every palette is already used.
+      if (!Array.isArray(THEMES) || THEMES.length === 0) return -1;
+      const prevKey = (prevColors || []).map(c => (c || '').toLowerCase()).join();
+      const unused = [];
+      for (let i = 0; i < THEMES.length; i++) {
+        const t = THEMES[i];
+        if (!t || !Array.isArray(t.colors) || t.colors.length < 4) continue;
+        const cols = t.colors.slice(0, 4);
+        if (cols.map(c => c.toLowerCase()).join() === prevKey) continue;
+        if (usedDnaVault.has(colorDnaFor(cols))) continue;
+        unused.push(i);
+      }
+      if (unused.length === 0) return -1;
+      const different = unused.filter(i => i !== state.activePalette);
+      const pool = different.length > 0 ? different : unused;
+      return pool[Math.floor(cryptoRandFloat() * pool.length)];
+    }
+
+    function fallbackHarmoniousColors() {
+      // Used only when every designer palette is already used for this
+      // preset/seed/angle (or THEMES is missing/empty). Random base hue, so
+      // it stays effectively unique. Same lightness ladder as the designer
+      // palettes: bright core -> mid glow -> accent -> deep shadow.
+      const baseHue = cryptoRandFloat() * 360; // fractional hue: ~continuous space, not just 360 steps
+      return [
+        hslToHex(baseHue, 96, 66),
+        hslToHex(baseHue + 38, 92, 50),
+        hslToHex(baseHue - 38, 86, 40),
+        hslToHex(baseHue + 72, 84, 11)
+      ];
+    }
+
+    function randomizeColors() {
+      if (!state.orbs || state.orbs.length === 0) return;
+      const prevColors = state.orbs.map(o => (o.color || '').toLowerCase());
+      let newColors = null;
+      const themeIdx = pickUnusedThemeIndex(prevColors);
+      if (themeIdx >= 0) {
+        newColors = THEMES[themeIdx].colors.slice(0, 4);
+        state.activePalette = themeIdx;
+      }
+      if (!newColors) {
+        // Retry until the generated palette is actually new for this
+        // preset/seed/angle (same hue twice would give identical colors).
+        for (let tries = 0; tries < 20 && !newColors; tries++) {
+          const cand = fallbackHarmoniousColors();
+          if (cand.map(c => c.toLowerCase()).join() === prevColors.join()) continue;
+          if (usedDnaVault.has(colorDnaFor(cand))) continue;
+          newColors = cand;
+        }
+        if (!newColors) newColors = fallbackHarmoniousColors();
+        state.activePalette = -1;
+      }
+      // ONLY colors change: keep each orb's position and radius, and leave
+      // every other state field (preset, counts, depth, angle, tone,
+      // resolution, format, seed, morph) exactly as it was.
+      state.orbs.forEach((orb, i) => { if (i < newColors.length) orb.color = newColors[i]; });
+      // Color-aware DNA: the vault hash is preset|morph|seed|hue|angle and
+      // does not include colors, so log the recolor as its own variant.
+      // This format differs from deck comboIds (preset|morph|run), so
+      // refillAndShuffleDeck() is unaffected.
+      const colorDna = colorDnaFor(newColors);
+      state.dnaHash = colorDna;
+      if (state.editingBatchIndex >= 0 && batchItems[state.editingBatchIndex]) {
+        batchItems[state.editingBatchIndex].dnaHash = colorDna;
+      }
+      usedDnaVault.add(colorDna);
+      saveVault();
+      pushHistorySnapshot();
+      renderThemeBubbles();
+      renderDmbSwatches();
+      requestRender();
+    }
+
+    ['randomColorsBtn', 'randomColorsBtnPalettes'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', randomizeColors);
+    });
+    // === RANDOM COLORS (END) ===
 
     function renderBaseMeshForSpec(spec, targetW, targetH) {
       baseCanvas.width = targetW;
@@ -4184,6 +4344,25 @@ ${elems.join('\n')}
         state.dotOpacity = p.dotOp / 100;
         state.dotShape = p.dotShape;
         state.angle = p.angle;
+        if (typeof p.theme === 'number' && THEMES[p.theme]) {
+          // 21 Nov 2026: new presets carry their own fixed palette (spec Part 1A).
+          // Same orb coords + radius as the theme-pill click handler.
+          state.activePalette = p.theme;
+          const coords = [
+            { x: 0.24, y: 0.26 },
+            { x: 0.56, y: 0.64 },
+            { x: 0.80, y: 0.32 },
+            { x: 0.30, y: 0.78 }
+          ];
+          state.orbs = THEMES[p.theme].colors.map((c, i) => ({
+            x: coords[i].x,
+            y: coords[i].y,
+            color: c,
+            radius: 0.60
+          }));
+          renderThemeBubbles();
+          renderDmbSwatches();
+        }
         syncSlidersUI();
         requestRender();
       });
@@ -4295,13 +4474,16 @@ ${elems.join('\n')}
     document.getElementById('autoMagicBtn').addEventListener('click', triggerRandomVariation);
     document.getElementById('stageRandomBtn').addEventListener('click', triggerRandomVariation);
 
-    // Keyboard shortcuts: R for Random, S for Export
+    // Keyboard shortcuts: R for Random, C for Random Colors, S for Export
     window.addEventListener('keydown', (e) => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === 'r' || e.key === 'R') {
         e.preventDefault();
         triggerRandomVariation();
+      } else if (e.key === 'c' || e.key === 'C') {
+        e.preventDefault();
+        randomizeColors();
       } else if (e.key === 's' || e.key === 'S') {
         e.preventDefault();
         saveSpecHighRes(state, state.presetKey, state.exportFormat);
@@ -4584,6 +4766,95 @@ ${elems.join('\n')}
       }
 
       stepZipRender();
+    });
+
+    // 21 Nov 2026: Batch one-by-one download (Raihan's ask) — reuses the ZIP
+    // handler's render loop, but downloads each file immediately instead of
+    // packing a ZIP. Sequential: render -> toBlob -> download -> next, with
+    // live per-file progress on the floating bar + batch bar + "N of total".
+    // Browsers may prompt once for multiple downloads (Chrome) or drop rapid
+    // sequential downloads (iOS Safari) — ZIP stays as the fallback.
+    // Clicking the button while a run is active stops after the current file.
+    let oneByOneState = 'idle'; // 'idle' | 'waiting' | 'running'
+    let oneByOneStopRequested = false;
+    let oneByOneWaitTimer = null;
+    function startOneByOneDownloads() {
+      const total = batchItems.length;
+      const hiCanvas = document.createElement('canvas');
+      const masterW = state.exportW;
+      const masterH = state.exportH;
+      const toast = createFloatingRenderBar(`One by one (${total} files)`, `${masterW}x${masterH}`, 'JPG');
+      const btn = document.getElementById('exportAllOneByOneBtn');
+      const btnLabel = btn.querySelector('span');
+      const origLabel = btnLabel ? btnLabel.textContent : 'Download one by one';
+      oneByOneState = 'running';
+      oneByOneStopRequested = false;
+      if (btnLabel) btnLabel.textContent = 'Stop';
+      batchProgressBar.style.display = 'block';
+      batchProgressFill.style.width = '0%';
+
+      let cur = 0;
+      function stepOneByOne() {
+        if (oneByOneStopRequested || cur >= total) {
+          const stopped = oneByOneStopRequested;
+          oneByOneState = 'idle';
+          if (btnLabel) btnLabel.textContent = origLabel;
+          hiCanvas.width = 0;
+          hiCanvas.height = 0;
+          batchProgressBar.style.display = 'none';
+          batchStatusText.textContent = stopped
+            ? `Stopped after ${cur} of ${total} downloads (${masterW} x ${masterH})`
+            : `Downloaded ${total} files one by one (${masterW} x ${masterH})`;
+          toast.complete(stopped ? `Stopped after ${cur} of ${total} files` : `Saved ${total} files one by one`);
+          return;
+        }
+        const spec = batchItems[cur];
+        const fileName = `MR_BG_${spec.presetKey}_seed${spec.seedOffset}_${String(cur + 1).padStart(3, '0')}_${masterW}x${masterH}.jpg`;
+        renderSpecToCanvas(spec, hiCanvas, masterW, masterH, false, false);
+        hiCanvas.toBlob((blob) => {
+          if (blob) triggerBlobDownload(blob, fileName);
+          cur++;
+          const pct = Math.round((cur / total) * 100);
+          batchProgressFill.style.width = `${pct}%`;
+          batchStatusText.textContent = `Downloaded ${cur} of ${total} (${masterW} x ${masterH})`;
+          toast.update(pct, `File ${cur} of ${total} (${masterW}x${masterH})`);
+          setTimeout(stepOneByOne, 150);
+        }, 'image/jpeg', state.jpgQuality || 0.98);
+      }
+      stepOneByOne();
+    }
+    document.getElementById('exportAllOneByOneBtn').addEventListener('click', () => {
+      if (oneByOneState === 'running') { oneByOneStopRequested = true; return; }
+      if (oneByOneState === 'waiting') {
+        clearInterval(oneByOneWaitTimer);
+        oneByOneWaitTimer = null;
+        oneByOneState = 'idle';
+        batchStatusText.textContent = 'One-by-one download cancelled before the batch was ready';
+        return;
+      }
+      if (batchItems.length === 0) {
+        // Empty batch: generate first, then auto-start (fixes the ZIP
+        // handler's two-click quirk for this button only; ZIP is untouched).
+        runBatchGeneration(50);
+        oneByOneState = 'waiting';
+        batchStatusText.textContent = 'Generating 50 specimens — one-by-one downloads start when ready…';
+        const deadline = Date.now() + 120000;
+        oneByOneWaitTimer = setInterval(() => {
+          if (oneByOneState !== 'waiting') { clearInterval(oneByOneWaitTimer); return; }
+          if (batchItems.length >= 50) {
+            clearInterval(oneByOneWaitTimer);
+            oneByOneWaitTimer = null;
+            startOneByOneDownloads();
+          } else if (Date.now() > deadline) {
+            clearInterval(oneByOneWaitTimer);
+            oneByOneWaitTimer = null;
+            oneByOneState = 'idle';
+            batchStatusText.textContent = 'Batch was not ready in time — tap Download one by one again';
+          }
+        }, 300);
+        return;
+      }
+      startOneByOneDownloads();
     });
 
     document.querySelectorAll('#gradModeRow .mini-pill').forEach(btn => {
